@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "552196613068",
+    "firebase_url": "https://akshaygyan-5befb-default-rtdb.firebaseio.com",
+    "project_id": "akshaygyan-5befb",
+    "storage_bucket": "akshaygyan-5befb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:552196613068:android:cf72e4a4f0e975f4d7b369",
+        "android_client_info": {
+          "package_name": "com.ksbm.akshyagyan"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "552196613068-e6ks5411diqgtdg26coci3dk3vgd8pvd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ksbm.akshyagyan",
+            "certificate_hash": "da7edd7d87adf152c05ccc658c735f6fa6282fe5"
+          }
+        },
+        {
+          "client_id": "552196613068-tdsskcpi9qrhe7pmrq2d0c9n97u90v0m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAzuJQlqaxU1xpBeUJm1Ob8JuSdzRxh8QI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "552196613068-tdsskcpi9qrhe7pmrq2d0c9n97u90v0m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
