@@ -37,7 +37,7 @@ import { useCallback } from 'react';
 import * as ProviderActions from '../../redux/actions/ProviderActions';
 import { Rating, AirbnbRating } from 'react-native-ratings';
 import RenderHtml from 'react-native-render-html';
-import DateCalender from '../../components/DateCalender';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
 import { success_toast, warnign_toast } from '../../components/MyToastMessage';
 import {
@@ -55,7 +55,7 @@ const { width, height } = Dimensions.get('screen');
 
 const ProviderHome = props => {
 
-  
+
 
   const [isLoading, setIsLoading] = useState(false);
   const [boostModalVisible, setBoostModalVisible] = useState(false);
@@ -68,12 +68,10 @@ const ProviderHome = props => {
   const [dateVisible, setDateVisible] = useState(false);
   const [chatModalVisible, setChatModalVisible] = useState(false);
   const [callModalVisible, setCallModalVisible] = useState(false);
-  
-  
+
+
   const handleApplyForLive = () => {
-
     props.navigation.navigate('ApplyForLive', { astro_id: props.providerData.id });
-
   }
 
   useEffect(() => {
@@ -86,13 +84,6 @@ const ProviderHome = props => {
     get_dashboard();
   }, []);
 
-
-  useEffect(() => {
-    if (date) {
-      change_next_login();
-    }
-  }, [dateVisible]);
-  
   const get_dashboard = async () => {
     console.log('test')
     setIsLoading(true);
@@ -112,7 +103,7 @@ const ProviderHome = props => {
       })
       .catch(err => {
         setIsLoading(false);
-        console.log('testaaa',err);
+        console.log('testaaa', err);
       });
   };
   const on_referesh = useCallback(async () => {
@@ -125,7 +116,6 @@ const ProviderHome = props => {
       },
     })
       .then(res => {
-        
         setIsRefereshing(false);
         props.dispatch(ProviderActions.setDashboard(res.data));
         props.dispatch(ProviderActions.setProviderData(res.data.data2));
@@ -134,7 +124,7 @@ const ProviderHome = props => {
       })
       .catch(err => {
         setIsRefereshing(false);
-        console.log('testaaa',err);
+        console.log('testaaa', err);
       });
   });
 
@@ -156,7 +146,7 @@ const ProviderHome = props => {
       })
       .catch(err => {
         setIsLoading(false);
-        console.log('testaaa',err);
+        console.log('testaaa', err);
       });
   };
 
@@ -178,30 +168,32 @@ const ProviderHome = props => {
       })
       .catch(err => {
         setIsLoading(false);
-        console.log('testaaa',err);
+        console.log('testaaa', err);
       });
   };
 
-  const change_next_login = async () => {
-    setIsLoading(true);
+  const change_next_login = async (value) => {
+    setDateVisible(false)
+    setIsLoading(true)
     await axios({
       method: 'post',
       url: api_url + next_log_status,
       data: {
         id: props.providerData.id,
-        next_login: moment(date).format('yyyy-MM-dd HH:mm:ss'),
+        next_login: moment(value).format('yyyy-MM-dd HH:mm:ss'),
       },
     })
       .then(res => {
         setIsLoading(false);
-        setDate(null);
+        console.log("ssss", res.data)
         if (res.data.status == 1) {
-          // success_toast(res.data.message);
+          success_toast(res.data.message);
+          get_dashboard()
         }
       })
       .catch(err => {
         setIsLoading(false);
-        console.log('testaaa',err);
+        console.log('testaaa', err);
       });
   };
 
@@ -216,7 +208,6 @@ const ProviderHome = props => {
     }).then(res => {
       setIsLoading(false)
       if (res.data.status) {
-
         if (parseFloat(props.dashboard?.data?.Walletbalance) >= parseFloat(res.data.amount)) {
           boost_astrologer_profile(res.data.amount);
         } else {
@@ -225,7 +216,7 @@ const ProviderHome = props => {
       }
     }).catch(err => {
       setIsLoading(false)
-      console.log('testaaa',err)
+      console.log('testaaa', err)
     })
   }
 
@@ -246,7 +237,7 @@ const ProviderHome = props => {
       success_toast('Your profile boosted.')
     }).catch(err => {
       setIsLoading(false)
-      console.log('testaaa',err)
+      console.log('testaaa', err)
     })
   }
 
@@ -282,7 +273,7 @@ const ProviderHome = props => {
     };
   }, []);
 
-  
+
   return (
     <View style={{ flex: 1, backgroundColor: colors.white_color }}>
       <MyStatusBar
@@ -301,8 +292,8 @@ const ProviderHome = props => {
           <TouchableOpacity
             onPress={() => props.navigation.navigate('providerProfile')}
             style={{ width: 40, height: 40, borderRadius: 50, overflow: 'hidden', marginRight: 10 }}>
-            <Image source={{uri : provider_img_url + 'uploads/vendor/' + props.providerData.img_url}}
-              resizeMode='contain' style={{ width: 40, height: 40 }} />
+            <Image source={{ uri: provider_img_url + 'uploads/vendor/' + props.providerData.img_url }}
+              resizeMode='cover' style={{ width: 40, height: 40 }} />
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => props.navigation.navigate('providerProfile')}
@@ -315,6 +306,7 @@ const ProviderHome = props => {
                 fontSize: 18,
                 color: colors.background_theme2,
                 fontFamily: fonts.bold,
+                textTransform: 'capitalize'
               }}>
               {props.providerData.owner_name}
             </Text>
@@ -337,7 +329,7 @@ const ProviderHome = props => {
                 style={{ width: 20, height: 20, tintColor: colors.white_color }} />
             </TouchableOpacity>
 
-            
+
           </View>
           <TouchableOpacity
             onPress={() => {
@@ -502,7 +494,7 @@ const ProviderHome = props => {
                         fontWeight: 'normal',
                         marginLeft: 5,
                       }}>
-                      {""} Next Online
+                      Next Online
                     </Text>
                   </TouchableOpacity>
 
@@ -602,9 +594,9 @@ const ProviderHome = props => {
                     <View
                       style={{
                         position: 'absolute', top: -5, right: -10,
-                        width: 25, height: 25, backgroundColor: colors.green_color2, borderRadius: 50, alignItems: 'center', justifyContent: 'center'
+                        width: 25, height: 25, backgroundColor: colors.white_color, borderRadius: 50, alignItems: 'center', justifyContent: 'center'
                       }}>
-                      <Text style={{ color: colors.white_color }}>
+                      <Text style={{ color: colors.background_theme2, fontFamily: fonts.bold }}>
                         {props.dashboard?.data?.messages.length == 0 ? 0 : props.dashboard.data.messages.length}
                       </Text>
                     </View>
@@ -635,9 +627,9 @@ const ProviderHome = props => {
                     <View
                       style={{
                         position: 'absolute', top: -5, right: -10,
-                        width: 25, height: 25, backgroundColor: colors.green_color2, borderRadius: 50, alignItems: 'center', justifyContent: 'center'
+                        width: 25, height: 25, backgroundColor: colors.white_color, borderRadius: 50, alignItems: 'center', justifyContent: 'center'
                       }}>
-                      <Text style={{ color: colors.white_color }}>
+                      <Text style={{ color: colors.background_theme2, fontFamily: fonts.bold }}>
                         {props.dashboard?.data?.announcements.length == 0 ? 0 : props.dashboard.data.announcements.length}
                       </Text>
                     </View>
@@ -717,7 +709,7 @@ const ProviderHome = props => {
                     </View>
                     <View style={styles.boxContainerB}>
                       <Text style={{ fontSize: 12, color: colors.white_color }}>
-                        Pickup Rule
+                        Pickup Rate
                       </Text>
                     </View>
                     <Text
@@ -729,7 +721,10 @@ const ProviderHome = props => {
                         textAlign: 'center',
                         // fontFamily: fonts.montserrat_medium,
                       }}>
-                      100%
+                      {parseFloat(
+                        props?.dashboard?.performance?.pickup_rate,
+                      ).toFixed()}
+                      %
                     </Text>
                     <View style={{ flex: 0, width: '80%' }}>
                       <Text
@@ -740,10 +735,7 @@ const ProviderHome = props => {
                           fontFamily: fonts.medium,
                           textAlign: 'center',
                         }}>
-                        {parseFloat(
-                          props?.dashboard?.performance?.pickup_rate,
-                        ).toFixed(2)}
-                        %
+                        out of{"\n"} 100%
                       </Text>
                     </View>
                   </View>
@@ -796,7 +788,10 @@ const ProviderHome = props => {
                         textAlign: 'center',
                         // fontFamily: fonts.montserrat_medium,
                       }}>
-                      100%
+                      {parseFloat(
+                        props?.dashboard?.performance?.average_call_duration,
+                      ).toFixed()}
+                      %
                     </Text>
                     <View style={{ flex: 0, width: '80%' }}>
                       <Text
@@ -807,10 +802,7 @@ const ProviderHome = props => {
                           fontFamily: fonts.medium,
                           textAlign: 'center',
                         }}>
-                        {parseFloat(
-                          props?.dashboard?.performance?.average_call_duration,
-                        ).toFixed(2)}
-                        %
+                        out of{"\n"} 100%
                       </Text>
                     </View>
                   </View>
@@ -971,17 +963,15 @@ const ProviderHome = props => {
               </TouchableOpacity>
             </View>
           </View>
-        </ScrollView>
-      </View>
-      <DateCalender
-        date={date == null ? new Date() : date}
-        dateVisible={dateVisible}
-        setDate={setDate}
-        setDateVisible={setDateVisible}
+        </ScrollView >
+      </View >
+      {dateVisible && <DateTimePicker
+        value={date == null ? new Date() : date}
+        onChange={change_next_login}
         minimumDate={new Date()}
         mode="datetime"
         display="inline"
-      />
+      />}
       <Modal visible={callModalVisible} transparent={true} animationType="fade">
         <View style={styles.modalContainerA}>
           <View
@@ -1250,7 +1240,6 @@ const ProviderHome = props => {
                   html: props?.dashboard?.data?.announcements[0]?.description,
                 }}
               />
-              {/* {props?.dashboard?.data?.announcements[0]?.description} */}
             </Text>
           </View>
         </View>

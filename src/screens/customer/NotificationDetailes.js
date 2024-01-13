@@ -1,6 +1,6 @@
-import {View, Text, Dimensions, Image, ScrollView} from 'react-native';
+import { View, Text, Dimensions, Image, ScrollView } from 'react-native';
 import React from 'react';
-import {useEffect} from 'react';
+import { useEffect } from 'react';
 import MyHeader from '../../components/MyHeader';
 import {
   api_url,
@@ -9,14 +9,14 @@ import {
   get_notifications,
   update_notifications,
 } from '../../config/Constants';
-import {useState} from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 import moment from 'moment';
 import MyLoader from '../../components/MyLoader';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import * as UserActions from '../../redux/actions/CustomerActions';
 
-const {width, height} = Dimensions.get('screen');
+const { width, height } = Dimensions.get('screen');
 
 const NotificationDetailes = props => {
   const [notificationData] = useState(props.route.params.notificationData);
@@ -25,7 +25,7 @@ const NotificationDetailes = props => {
     props.navigation.setOptions({
       header: () => (
         <MyHeader
-          title="Notifications"
+          title="Notification Details"
           navigation={props.navigation}
           socialIcons={false}
           statusBar={{
@@ -56,7 +56,7 @@ const NotificationDetailes = props => {
       .then(res => {
         setIsLoading(false);
         console.log(res.data);
-        get_my_notifications();
+        // get_my_notifications();
       })
       .catch(err => {
         setIsLoading(false);
@@ -75,7 +75,7 @@ const NotificationDetailes = props => {
     })
       .then(res => {
         setIsLoading(false);
-        let un_read = res.data.records?.filter(item=>item.read == 0)
+        let un_read = res.data.records?.filter(item => item.read == 0)
         props.dispatch(UserActions.setNotifications(res.data.records));
         props.dispatch(UserActions.setNotificationCounts(un_read.length));
       })
@@ -86,7 +86,7 @@ const NotificationDetailes = props => {
   };
 
   return (
-    <View style={{flex: 1, backgroundColor: colors.black_color1}}>
+    <View style={{ flex: 1, backgroundColor: colors.black_color1 }}>
       <MyLoader isVisible={isLoading} />
       <View
         style={{
@@ -105,8 +105,8 @@ const NotificationDetailes = props => {
             borderRadius: 10,
           }}>
           <Image
-             source={notificationData.image_url.length != 0 ? {uri: notificationData.image_url} : require('../../assets/images/logo.png')}
-            style={{width: '100%', height: '100%', borderRadius: 10, resizeMode: 'contain'}}
+            source={notificationData.image_url.length != 0 ? { uri: notificationData.image_url } : require('../../assets/images/logo.png')}
+            style={{ width: '100%', height: '100%', borderRadius: 10, resizeMode: 'contain' }}
           />
         </View>
         <View
@@ -116,7 +116,7 @@ const NotificationDetailes = props => {
             backgroundColor: colors.background_theme1,
           }}>
           <ScrollView>
-            <View style={{padding: 10}}>
+            <View style={{ padding: 10 }}>
               <Text
                 style={{
                   fontSize: 16,
@@ -159,7 +159,7 @@ const mapStateToProps = state => ({
   wallet: state.customer.wallet,
 });
 
-const mapDispatchToProps = dispatch => ({dispatch});
+const mapDispatchToProps = dispatch => ({ dispatch });
 
 export default connect(
   mapStateToProps,

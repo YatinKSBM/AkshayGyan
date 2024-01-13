@@ -35,36 +35,38 @@ const Notifications = props => {
           })
         }
         style={{
-          flex: 0,
-          width: '90%',
-          padding: 10,
-          marginHorizontal: 10,
+          width: '95%',
+          padding: width * 0.02,
           backgroundColor:
             item.read == 0
-              ? colors.yellow_color1
-              : colors.background_theme1,
+              ? colors.white_color
+              : colors.black_color3,
           marginBottom: 15,
           borderRadius: 10,
-          elevation: 5,
-          alignItems: 'center',
+          elevation: 3,
+          alignSelf: 'center'
         }}>
-        <View style={{ flex: 0, flexDirection: 'row', alignItems: 'center' }}>
-          <Image
-            source={item.image_url.length != 0 ? { uri: item.image_url } : require('../../assets/images/logo.png')}
-            style={{
-              width: width * 0.18,
-              height: width * 0.18,
-              borderRadius: 1000,
-            }}
-          />
-          <View style={{ flex: 1, marginLeft: 10 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <View style={{ width: '20%', }}>
+            <View style={{ width: width * 0.15, height: width * 0.15 }}>
+              <Image
+                source={item.image_url.length != 0 ? { uri: item.image_url } : require('../../assets/images/logo.png')}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  borderRadius: 1000,
+                }}
+              />
+            </View>
+          </View>
+          <View style={{ width: '80%', }}>
             <Text
               numberOfLines={1}
               style={{
                 fontSize: 16,
                 color:
                   item.read == 0
-                    ? colors.background_theme1
+                    ? colors.black_color
                     : colors.black_color7,
                 fontFamily: fonts.semi_bold,
                 marginBottom: 5,
@@ -72,12 +74,12 @@ const Notifications = props => {
               {item.title}
             </Text>
             <Text
-              numberOfLines={2}
+              numberOfLines={32}
               style={{
                 fontSize: 12,
                 color:
                   item.read == 0
-                    ? colors.background_theme1
+                    ? colors.black_color
                     : colors.black_color6,
                 fontFamily: fonts.medium,
               }}>
@@ -90,7 +92,7 @@ const Notifications = props => {
             textAlign: 'right',
             fontSize: 12,
             color:
-              item.read == 0 ? colors.background_theme1 : colors.gray,
+              item.read == 0 ? colors.black_color6 : colors.gray,
             fontFamily: fonts.medium,
           }}>
           {item.created_date}
@@ -100,13 +102,18 @@ const Notifications = props => {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.black_color1, width: '100%', justifyContent: 'center', padding: 10 }}>
+    <View style={{
+      flex: 1, backgroundColor: colors.black_color1,
+      width: '100%',
+      justifyContent: 'center',
+      paddingHorizontal: width * 0.02,
+      paddingVertical: width * 0.04
+    }}>
       {props.notificationData && (
         <FlatList
           data={props.notificationData}
           renderItem={renderItem}
           keyExtractor={item => item.id}
-          style={{ width: width }}
         />
       )}
     </View>

@@ -32,6 +32,7 @@ import auth from '@react-native-firebase/auth';
 import messaging from '@react-native-firebase/messaging';
 import database from '@react-native-firebase/database';
 import MyLoader from '../../components/MyLoader';
+import { FirebaseHandle } from '../../utils/common';
 
 const { width, height } = Dimensions.get('screen');
 
@@ -76,43 +77,190 @@ const AstrologerLogin = props => {
     }
   };
 
-  const login = async () => {
-    if (validation()) {
-      setIsLoading(true);
-      await axios({
-        method: 'post',
-        url: base_url + astrologer_login,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-        data: {
-          email: email,
-          password: password,
-        },
-      })
-        .then(async res => {
-          setIsLoading(false);
-          if (res.data?.success == '200') {
-            await AsyncStorage.setItem(
-              'ProviderData',
-              JSON.stringify(res.data.data),
-            );
-            sign_in_with_email_and_password(res.data.data);
-          } else {
-            Alert.alert('Plese check your email and password.');
-          }
-        })
-        .catch(err => {
-          setIsLoading(false);
-          Alert.alert(err)
-          console.log(err);
-        });
-    }
+  // const login = async () => {
+  //   if (validation()) {
+  //     setIsLoading(true);
+  //     await axios({
+  //       method: 'post',
+  //       url: base_url + astrologer_login,
+  //       headers: {
+  //         'Content-Type': 'multipart/form-data',
+  //       },
+  //       data: {
+  //         email: email,
+  //         password: password,
+  //       },
+  //     })
+  //       .then(async res => {
+  //         setIsLoading(false);
+  //         console.log(res.data)
+  //         if (res.data?.success == '200') {
+  //           await AsyncStorage.setItem(
+  //             'ProviderData',
+  //             JSON.stringify(res.data.data),
+  //           );
+  //           sign_in_with_email_and_password(res.data.data);
+  //         } else {
+  //           Alert.alert('Plese check your email and password.');
+  //         }
+  //       })
+  //       .catch(err => {
+  //         setIsLoading(false);
+  //         Alert.alert(err)
+  //         console.log(err);
+  //       });
+  //   }
 
+  // };
+
+  // const provider_dashboard = async id => {
+  //   setIsLoading(true)
+  //   await axios({
+  //     method: 'post',
+  //     url: api_url + astrologer_dashboard,
+  //     data: {
+  //       astro_id: id,
+  //     },
+  //   })
+  //     .then(res => {
+  //       setIsLoading(false)
+  //       props.dispatch(ProviderActions.setDashboard(res.data))
+  //       props.dispatch(ProviderActions.setProviderData(res.data.data2));
+  //       home();
+  //     })
+  //     .catch(err => {
+  //       setIsLoading(false)
+  //       console.log(err);
+  //     });
+  // }
+
+  // const sign_in_with_email_and_password = async astrologer => {
+  //   let fcm_token = await messaging().getToken();
+  //   setIsLoading(true)
+  //   await auth()
+  //     .signInWithEmailAndPassword(email, '12345678')
+  //     .then(response => {
+  //       setIsLoading(false)
+  //       console.log(response.user.uid);
+  //       props.dispatch(ProviderActions.setFirebaseId(response.user.uid));
+  //       database()
+  //         .ref(`/Users/${response.user.uid}`)
+  //         .set({
+  //           token: fcm_token,
+  //           name: astrologer.owner_name,
+  //           email: email,
+  //           image: astrologer?.img_url,
+  //           date: new Date().getTime(),
+  //         })
+  //         .then(res => {
+  //           update_fcm_token(astrologer.id, response.user.uid);
+  //         })
+  //         .catch(err => {
+  //           console.log(err);
+  //         });
+
+  //       database()
+  //         .ref(`/AstroId/${astrologer.id}`)
+  //         .set(response.user.uid)
+  //         .then(res => {
+
+  //         })
+  //         .catch(err => {
+  //           console.log(err);
+  //         });
+  //     })
+  //     .catch(err => {
+  //       setIsLoading(false)
+  //       console.log(err);
+  //       // props.navigation.navigate('signup', {
+  //       //   phone_number: props.route.params.phone_number,
+  //       //   id: id,
+  //       //   flag: props.route.params?.flag,
+  //       // });
+  //     });
+  // };
+
+
+
+  // const update_fcm_token = async (user_id, uid) => {
+  //   setIsLoading(true);
+  //   let fcm_token = await messaging().getToken();
+  //   await axios({
+  //     method: 'post',
+  //     url: api_url + add_or_update_device_token,
+  //     headers: {
+  //       'content-type': 'multipart/form-data',
+  //     },
+  //     data: {
+  //       user_id: user_id,
+  //       user_type: 'astrologer',
+  //       device_token: fcm_token,
+  //       token: uid,
+  //     },
+  //   })
+  //     .then(res => {
+  //       setIsLoading(false);
+  //       provider_dashboard(user_id);
+  //     })
+  //     .catch(err => {
+  //       setIsLoading(false);
+  //       console.log(err);
+  //     });
+  // };
+
+  // const home = () => {
+  //   props.navigation.dispatch(
+  //     CommonActions.reset({
+  //       index: 0,
+  //       routes: [{ name: 'providerHome' }],
+  //     }),
+  //   );
+  // };
+
+
+
+
+
+  const login = async () => {
+    setIsLoading(true);
+
+    await axios({
+      method: 'post',
+      url: base_url + astrologer_login,
+
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      data: {
+        email: email,
+        password: password,
+      },
+    })
+      .then(async res => {
+        setIsLoading(false);
+        if (res.data?.success == '200') {
+          await AsyncStorage.setItem(
+            'ProviderData',
+            JSON.stringify(res.data.data),
+          );
+          FirebaseHandle.create_firebase_account({
+            userId: res.data.data?.id,
+            userAccount: email,
+            type: 'astro',
+          });
+          update_fcm_token(res.data.data?.id);
+        } else {
+          Alert.alert('Plese check your email and password.');
+        }
+      })
+      .catch(err => {
+        setIsLoading(false);
+        console.log(err);
+      });
   };
 
   const provider_dashboard = async id => {
-    setIsLoading(true)
+    setIsLoading(true);
     await axios({
       method: 'post',
       url: api_url + astrologer_dashboard,
@@ -121,60 +269,14 @@ const AstrologerLogin = props => {
       },
     })
       .then(res => {
-        setIsLoading(false)
-        props.dispatch(ProviderActions.setDashboard(res.data))
+        setIsLoading(false);
+        props.dispatch(ProviderActions.setDashboard(res.data));
         props.dispatch(ProviderActions.setProviderData(res.data.data2));
         home();
       })
       .catch(err => {
-        setIsLoading(false)
+        setIsLoading(false);
         console.log(err);
-      });
-  }
-
-  const sign_in_with_email_and_password = async astrologer => {
-    let fcm_token = await messaging().getToken();
-    setIsLoading(true)
-    await auth()
-      .signInWithEmailAndPassword(email, '12345678')
-      .then(response => {
-        setIsLoading(false)
-        console.log(response.user.uid);
-        props.dispatch(ProviderActions.setFirebaseId(response.user.uid));
-        database()
-          .ref(`/Users/${response.user.uid}`)
-          .set({
-            token: fcm_token,
-            name: astrologer.owner_name,
-            email: email,
-            image: astrologer?.img_url,
-            date: new Date().getTime(),
-          })
-          .then(res => {
-            update_fcm_token(astrologer.id, response.user.uid);
-          })
-          .catch(err => {
-            console.log(err);
-          });
-
-          database()
-          .ref(`/AstroId/${astrologer.id}`)
-          .set(response.user.uid)
-          .then(res => {
-           
-          })
-          .catch(err => {
-            console.log(err);
-          });
-      })
-      .catch(err => {
-        setIsLoading(false)
-        console.log(err);
-        // props.navigation.navigate('signup', {
-        //   phone_number: props.route.params.phone_number,
-        //   id: id,
-        //   flag: props.route.params?.flag,
-        // });
       });
   };
 
@@ -212,6 +314,8 @@ const AstrologerLogin = props => {
       }),
     );
   };
+
+
   return (
     <View style={{ flex: 1, backgroundColor: colors.white_color }}>
       <MyStatusBar

@@ -72,6 +72,7 @@ export const send_gift = 'api2/send_gift'
 export const send_friend_request = 'api2/send_friend_request'
 
 // Astrologer
+export const astrologer_enquiry = 'user/register_astro.php'
 export const astrologer_login = 'user/astrologer_login.php';
 export const astrologer_dashboard = 'api/astrologer_dashboard';
 export const change_status_call = 'api/changestatuscall';
@@ -144,10 +145,11 @@ export const colors = {
 };
 
 export const fonts = {
-  bold: 'OpenSans-Bold',
-  semi_bold: 'OpenSans-SemiBold',
-  medium: 'OpenSans-Medium',
-  light: 'OpenSans-Light',
+  bold: 'DMSans-Bold',
+  semi_bold: 'DMSans-SemiBold',
+  medium: 'DMSans-Medium',
+  light: 'DMSans-Light',
+  regular: 'DMSans-Regular',
 };
 
 export const vedic_images = {
@@ -156,4 +158,8 @@ export const vedic_images = {
   flag: require('../assets/images/india-flag.jpeg'),
   provider_login: require('../assets/images/logo1.png'),
   chat_background: require('../assets/images/chat_background.jpeg'),
+};
+
+export const Sizes = {
+  fixPadding: 10,
 };

@@ -1,203 +1,116 @@
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Image,
-  Dimensions,
-  StyleSheet,
-} from 'react-native';
-import React from 'react';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Consult from '../screens/Consult';
-import Services from '../screens/Services';
-import Article from '../screens/Article';
-import Home from '../screens/customer/Home';
-import AstroForCall from '../screens/customer/AstroForCall';
+import React from 'react'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import { View, StyleSheet, Image, Text } from 'react-native'
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import Animated, { BounceIn, FlipInEasyY } from 'react-native-reanimated';
 import AstroForChat from '../screens/customer/AstroForChat';
-import AstroBlogs from '../screens/customer/AstroBlogs';
-import AstroDate from '../screens/customer/AstroDate';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import EvilIcons from 'react-native-vector-icons/EvilIcons';
-
-import { colors, fonts } from '../config/Constants';
-
-import AudiencePage from '../screens/customer/AudiencePage';
 import AstroLive from '../screens/customer/AstroLive';
+import Home from '../screens/customer/Home';
 import AstroMall from '../screens/customer/AstroMall';
-// import HomePage from '../screens/HomePage';
-const { width, height } = Dimensions.get('screen');
+import { colors, fonts } from '../config/Constants';
+import AstroForCall from '../screens/customer/AstroForCall';
+import AstroDate from '../screens/customer/AstroDate';
+var Tab = createBottomTabNavigator()
 
-const Tab = createBottomTabNavigator();
+const BottomTabs = () => {
+  const TabArr = [
+    { id: 1, route: 'home', title: 'Home', deactiveIcon: require(`../assets/images/tabIcons/home1.png`), activeIcon: require(`../assets/images/tabIcons/home2.png`), component: Home, bwidth: '20%' },
+    { id: 2, route: 'call', title: 'Call', deactiveIcon: require(`../assets/images/tabIcons/call1.png`), activeIcon: require(`../assets/images/tabIcons/call2.png`), component: AstroForCall, bwidth: '20%' },
+    { id: 3, route: 'chat', title: 'Chat', deactiveIcon: require(`../assets/images/tabIcons/chat1.png`), activeIcon: require(`../assets/images/tabIcons/chat2.png`), component: AstroForChat, bwidth: '20%' },
+    { id: 4, route: 'live', title: 'Live', deactiveIcon: require(`../assets/images/tabIcons/live1.png`), activeIcon: require(`../assets/images/tabIcons/live2.png`), component: AstroLive, bwidth: '20%' },
+    { id: 5, route: 'mall', title: 'Mall', deactiveIcon: require(`../assets/images/tabIcons/mall1.png`), activeIcon: require(`../assets/images/tabIcons/mall2.png`), component: AstroMall, bwidth: '20%' }
+  ]
 
-function MyTabBar({ state, descriptors, accessibilityState, navigation }) {
-  return (
-    <View
-      style={styles.tabContainer}>
-      {state.routes.map((route, index) => {
-        const { options } = descriptors[route.key];
-        const label =
-          options.tabBarLabel !== undefined
-            ? options.tabBarLabel
-            : options.title !== undefined
-              ? options.title
-              : route.name;
-
-        const isFocused = state.index === index;
-
-        const onPress = () => {
-          const event = navigation.emit({
-            type: 'tabPress',
-            target: route.key,
-            canPreventDefault: true,
-
-            // userID: userID,
-            // userName: userID,
-            // liveID: liveID,
-          });
-
-          if (!isFocused && !event.defaultPrevented) {
-            // The `merge: true` option makes sure that the params inside the tab screen are preserved
-            navigation.navigate({ name: route.name, merge: true });
-          }
-        };
-
-        const onLongPress = () => {
-          navigation.emit({
-            type: 'tabLongPress',
-            target: route.key,
-          });
-        };
-        return (
+  const CustomTabbarButton = (props) => {
+    const { item, onPress, accessibilityState } = props;
+    const focused = accessibilityState.selected
+    return (
+      <View style={{ alignItems: 'center', width: item.bwidth, justifyContent: 'center' }}>
+        {focused ?
           <TouchableOpacity
-            key={label}
-            accessibilityRole="button"
-            accessibilityState={isFocused ? { selected: true } : {}}
-            accessibilityLabel={options.tabBarAccessibilityLabel}
-            testID={options.tabBarTestID}
+            style={styles.CustomButtonContainer2}
             onPress={onPress}
-            onLongPress={onLongPress}
-            style={
-              label == 'home3' ? styles.middleButton : styles.tabButton
-            }>
-            {label == 'home3' ? (
-              <View
+          >
+            <Animated.View style={styles.btn} entering={BounceIn} >
+              <Image
+                source={item.activeIcon}
+                resizeMode='contain'
                 style={{
-                  flex: 0,
-                  width: width * 0.14,
-                  height: width * 0.14,
-                  borderRadius: (width * 0.14) / 2,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  backgroundColor: colors.white_color,
-                  elevation: 8,
-                  shadowColor: colors.black_color4
-                }}>
-                <Image
-                  source={require('../assets/images/tabIcons/home.png')}
-                  style={{ width: width * 0.08, height: width * 0.08, tintColor: isFocused ? colors.background_theme2 : colors.gray }}
-                />
-              </View>
-            ) : label == 'AudiencePage' ? (
-              <Image
-                source={require('../assets/images/tabIcons/live.png')}
-                style={{ width: width * 0.07, height: width * 0.07, tintColor: isFocused ? colors.background_theme2 : colors.gray }}
+                  width: 22,
+                  height: 22,
+                  tintColor: colors.background_theme2,
+                  marginBottom: 5,
+                }}
               />
-            ) : label == 'astroForChat' ? (
+            </Animated.View>
+            <Animated.View style={styles.btn} entering={FlipInEasyY} >
+              <Text style={{ color: colors.background_theme2, fontFamily: fonts.medium, fontSize: 12 }} > {item.title}</Text>
+            </Animated.View>
+          </TouchableOpacity> :
+          <TouchableOpacity
+            style={styles.CustomButtonContainer2}
+            onPress={onPress}
+          >
+            <View style={styles.btn} >
               <Image
-                source={require('../assets/images/tabIcons/chat.png')}
-                style={{ width: width * 0.05, height: width * 0.05, tintColor: isFocused ? colors.background_theme2 : colors.gray }}
-              />
-              // <AntDesign name={'wechat'} size={25} color={colors.black_color} />
-            ) : label == 'astroMall' ? (
-              <Image
-                source={require('../assets/images/tabIcons/mall.png')}
-                style={{ width: width * 0.06, height: width * 0.06, tintColor: isFocused ? colors.background_theme2 : colors.gray }}
-              />
-              // <Ionicons name={'bag-outline'} size={25} color={colors.black_color} />
-            ) : (
-              <Image
-                source={require('../assets/images/tabIcons/profile.png')}
-                style={{ width: width * 0.06, height: width * 0.06, tintColor: isFocused ? colors.background_theme2 : colors.gray }}
-              />
-              // <EvilIcons name={'user'} size={30} color={colors.black_color} />
-
-            )}
-            {isFocused ?
-              <Text
+                source={item.deactiveIcon}
+                resizeMode='contain'
                 style={{
-                  color: colors.black_color,
-                  fontFamily: fonts.semi_bold,
-                  marginTop: 5,
-                  fontSize: 12,
-                }}>
-                {label == 'astroForChat'
-                  ? 'Chat'
-                  : label == 'AudiencePage'
-                    ? 'Live'
-                    : label == 'home3'
-                      ? 'Home'
-                      : label == 'astroMall'
-                        ? 'Astro Mall'
-                        : 'Profile'}
-              </Text > : <></>}
+                  width: 22,
+                  height: 22,
+                  tintColor: colors.gray,
+                  marginBottom: 5,
+                }}
+              />
+            </View>
+            <Text style={{ fontFamily: fonts.medium, color: colors.gray, fontSize: 12 }} > {item.title}</Text>
           </TouchableOpacity>
-        );
-      })}
-    </View>
-  );
-}
+        }
+      </View >
+    )
+  }
 
-const TabNavigator = (props) => {
   return (
-    <Tab.Navigator
-      abBarOptions={{
-        // Set your desired background color here
-      }}
-      initialRouteName={props.route.params?.flag == 1 ? 'astroDate' : 'home3'}
-      tabBar={props => <MyTabBar {...props} />}
-      screenOptions={{ headerShown: true, headerShadowVisible: false }}>
-      <Tab.Screen name="astroForChat" component={AstroForChat} />
-      <Tab.Screen name="AudiencePage" component={AstroLive} />
-      <Tab.Screen name="home3" component={Home} />
-      <Tab.Screen name="astroMall" component={AstroMall} />
-      <Tab.Screen name="astroDate" component={AstroDate} />
-    </Tab.Navigator>
-  );
-};
-
-export default TabNavigator;
-
+    <>
+      <Tab.Navigator
+        initialRouteName='Home'
+        screenOptions={{
+          headerShown: false,
+          tabBarShowLabel: false,
+          tabBarStyle:
+          {
+            height: 70,
+            backgroundColor: '#fff',
+            elevation: 20
+          }
+        }}>
+        {TabArr.map((item) => {
+          return (
+            <Tab.Screen name={item.route} component={item.component} key={item.id}
+              options={{
+                tabBarButton: (props) => <CustomTabbarButton {...props} item={item} />
+              }}
+            />
+          )
+        })
+        }
+      </Tab.Navigator >
+    </>
+  )
+}
+export default BottomTabs;
 const styles = StyleSheet.create({
-  tabContainer: {
-    flexDirection: 'row',
-    backgroundColor: colors.white_color,
-    shadowColor: colors.background_theme2,
-    shadowOffset: { width: 2, height: 4 },
-    shadowOpacity: 0.3,
-    paddingHorizontal: 2,
-  },
-  tabButton: {
-    flex: 1,
-    justifyContent: 'center',
+  CustomButtonContainer: {
+    top: -30,
     alignItems: 'center',
-  },
-  middleButton: {
-    flex: 0,
-    width: width * 0.15,
-    height: width * 0.15,
-    borderRadius: (width * 0.15) / 2,
     justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'transparent',
-    position: 'relative',
-    bottom: 25,
-    backfaceVisibility: 'hidden',
-    shadowOffset: {
-      width: 2,
-      height: 1,
-    },
-    shadowColor: colors.black_color8,
-    shadowOpacity: 0.3,
+    backgroundColor: 'red'
   },
-});
+  CustomButtonContainer2: {
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  btn: {
+    alignItems: 'center',
+  }
+})

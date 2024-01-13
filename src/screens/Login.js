@@ -246,7 +246,7 @@ const Login = props => {
             onPress={login}
             style={{
               flex: 0,
-              width: '70%',
+              width: '100%',
               alignSelf: 'center',
               flexDirection: 'row',
               alignItems: 'center',

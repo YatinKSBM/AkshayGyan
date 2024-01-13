@@ -6,13 +6,18 @@ import {
   TextInput,
   StyleSheet,
   TouchableOpacity,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
+  Alert
 } from 'react-native';
 import React from 'react';
 import { useEffect } from 'react';
-import { colors, fonts } from '../../config/Constants';
+import { astrologer_enquiry, base_url, colors, fonts } from '../../config/Constants';
 import MyStatusBar from '../../components/MyStatusbar';
 import { useState } from 'react';
+import BouncyCheckbox from 'react-native-bouncy-checkbox';
+import MyLoader from '../../components/MyLoader';
+import axios from 'axios';
+import { success_toast } from '../../components/MyToastMessage';
 
 const { width, height } = Dimensions.get('screen');
 
@@ -25,12 +30,91 @@ const VerifiedAstrologer = props => {
   const [experties, setExperties] = useState('');
   const [skills, setSkills] = useState('');
   const [experience, setExperience] = useState('');
+  const [male, setMale] = useState(true);
+  const [female, setFemale] = useState(false);
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     props.navigation.setOptions({
       headerShown: false,
     });
   }, []);
+
+  const emain_validation = () => {
+    let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (reg.test(email) === false) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+  const validation = () => {
+    var isValid = true
+    if (name.length == 0) {
+      Alert.alert('Please enter Your name');
+      isValid = false;
+    } else if (email.length == 0) {
+      Alert.alert('Please enter your email');
+      isValid = false;
+    } else if (emain_validation()) {
+      Alert.alert('Please enter correct email address.')
+      isValid = false;
+    } else if (mobileNumber.length != 10) {
+      Alert.alert('Please enter your Mobile NUmber.');
+      isValid = false;
+    } else if (language.length == 0) {
+      Alert.alert('Please enter your Language.');
+      isValid = false;
+    } else if (experties.length == 0) {
+      Alert.alert('Please enter your experties.');
+      isValid = false;
+    } else if (skills.length == 0) {
+      Alert.alert('Please enter your skills.');
+      isValid = false;
+    } else if (experience.length == 0) {
+      Alert.alert('Please enter your experience.');
+      isValid = false;
+    }
+    return isValid
+  };
+
+  const handleSubmit = async () => {
+    if (validation()) {
+      setIsLoading(true);
+      await axios({
+        method: 'post',
+        url: base_url + astrologer_enquiry,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        data: {
+          name: name,
+          email: email,
+          phone: mobileNumber,
+          location: currentLocation,
+          language: language,
+          expertise: experties,
+          skill: skills,
+          experience: experience,
+          gender: male ? 'Male' : 'Female',
+        },
+      }).then(res => {
+        setIsLoading(false);
+        console.log(res.data);
+        if (res.data.status == 1) {
+          success_toast('Enquiry Submitted Successfully!!');
+          props.navigation.goBack();
+        }
+        else {
+          Alert.alert('Message', res.data.Response);
+        }
+      }).catch(err => {
+        setIsLoading(false);
+        console.log(err);
+      })
+    }
+  }
+
   return (
     <View style={{ flex: 1, backgroundColor: colors.yellow_color5, paddingTop: 10 }}>
       <MyStatusBar
@@ -47,6 +131,7 @@ const VerifiedAstrologer = props => {
         }}>
         Only for Astrologer
       </Text>
+      <MyLoader isVisible={isLoading} />
       <KeyboardAvoidingView
         behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}>
@@ -97,12 +182,12 @@ const VerifiedAstrologer = props => {
               />
               <TextInput
                 placeholder="WhatsApp Mobile Number"
-
                 placeholderTextColor={colors.black_color6}
                 cursorColor={colors.black_color}
                 keyboardType="number-pad"
                 style={styles.textInput}
                 onChangeText={setMobileNumber}
+                maxLength={10}
               />
               <TextInput
                 placeholder="Current Location"
@@ -138,8 +223,61 @@ const VerifiedAstrologer = props => {
                 cursorColor={colors.black_color}
                 style={styles.textInput}
                 onChangeText={setExperience}
+                inputMode='numeric'
+                maxLength={2}
               />
+              <View
+                style={{
+                  flex: 0,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  paddingBottom: 2,
+                  paddingHorizontal: 2
+                }}>
+                <View
+                  style={{
+                    flex: 0.5,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                  }}>
+                  <BouncyCheckbox
+                    size={20}
+                    fillColor={colors.background_theme2}
+                    unfillColor="#FFFFFF"
+                    isChecked={male}
+                    disableBuiltInState
+                    textStyle={styles.checkBoxText}
+                    text="Male"
+                    onPress={() => {
+                      setMale(true);
+                      setFemale(false);
+                    }}
+                  />
+                </View>
+                <View
+                  style={{
+                    flex: 0.5,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                  }}>
+                  <BouncyCheckbox
+                    size={20}
+                    fillColor={colors.background_theme2}
+                    unfillColor="#FFFFFF"
+                    isChecked={female}
+                    disableBuiltInState
+                    text="Female"
+                    textStyle={styles.checkBoxText}
+                    onPress={() => {
+                      setMale(false);
+                      setFemale(true);
+                    }}
+                  />
+                </View>
+              </View>
+
               <TouchableOpacity
+                onPress={handleSubmit}
                 style={{
                   flex: 0,
                   width: '100%',
@@ -181,6 +319,11 @@ const styles = StyleSheet.create({
     borderColor: colors.black_color5,
     fontFamily: fonts.medium,
     marginBottom: 15,
-
+  },
+  checkBoxText: {
+    fontSize: 14,
+    color: colors.black_color8,
+    fontFamily: fonts.medium,
+    textDecorationLine: 'none',
   },
 });

@@ -5,8 +5,7 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
-  Platform,
-  // Modal,
+  FlatList
 } from 'react-native';
 import React from 'react';
 import { useEffect } from 'react';
@@ -23,7 +22,7 @@ import {
   user_review,
 } from '../../config/Constants';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Entypo from 'react-native-vector-icons/Entypo';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { Rating, AirbnbRating } from 'react-native-ratings';
 import { useState } from 'react';
@@ -31,20 +30,23 @@ import axios from 'axios';
 import MyLoader from '../../components/MyLoader';
 import Modal from 'react-native-modal';
 import { connect } from 'react-redux';
-import VerifiedAstrologer from '../provider/VerifiedAstrologer';
-import Entypo from 'react-native-vector-icons/Entypo';
+import LinearGradient from 'react-native-linear-gradient';
 
+const reviews = [
+  1, 2, 3
+]
 
 const { width, height } = Dimensions.get('screen');
 
 const AstrologerDetailes = props => {
-  const [purpose, setPurpose] = useState(null);
+  const [purpose, setPurpose] = useState(props?.route?.params?.type);
   const [astroData] = useState(props.route.params.data);
   const [isLoading, setIsLoading] = useState(false);
   const [astroDetailes, setAstroDetailes] = useState(null);
   const [reviewData, setReviewData] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [chatStatus, setChatStaus] = useState('Chat Now');
+  const [callStatus, setCallStatus] = useState('Call Now');
   const [walletModalVisible, setWalletModalVisible] = useState(false);
   const [isFollow, setIsfollow] = useState('0');
   const [follower, setFollower] = useState('0');
@@ -53,7 +55,7 @@ const AstrologerDetailes = props => {
     props.navigation.setOptions({
       header: () => (
         <MyHeader
-          title="Profile"
+          title="Astrologer Details"
           navigation={props.navigation}
           statusBar={{
             backgroundColor: colors.background_theme2,
@@ -197,465 +199,15 @@ const AstrologerDetailes = props => {
       <MyLoader isVisible={isLoading} />
       <View style={{ flex: 1 }}>
         {astroDetailes && (
-          <ScrollView showsVerticalScrollIndicator={false} style={{ marginBottom: 30 }}>
-            <View
-              style={{
-                flex: 0,
-                paddingHorizontal: 15,
-                paddingTop: 15,
-                flexDirection: 'row',
-                paddingVertical: width * 0.08,
-                borderRadius: 20,
-                backgroundColor: colors.background_theme1,
-                marginTop: 19,
-
-              }}>
-              {/* <Text
-                style={{
-                  fontSize: 16,
-                  color: colors.white_color,
-                  fontFamily: fonts.bold,
-                  textTransform: 'uppercase',
-                }}>
-                {astroData?.owner_name}
-              </Text> */}
-              <View
-                style={{
-                  flex: 0,
-                  width: '45%',
-                  // alignSelf: 'center',
-                  flexDirection: 'row',
-                  justifyContent: 'center',
-                  // backgroundColor: 'red',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  borderRadius: 20,
-
-                  // paddingVertical: width * 0.03,
-                  // marginTop: 19,
-                }}>
-                {astroData.image == null ? (
-                  <Image
-                    source={{ uri: astroData?.image }}
-                    style={{
-                      width: width * 0.25,
-                      height: width * 0.25,
-                      borderWidth: 1,
-                      borderRadius: (width * 0.25) / 2,
-                      borderColor: colors.background_theme2,
-                      position: 'relative',
-                      left: (-width * 0.25) / 2,
-                    }}
-                  />
-                ) : (
-                  <Image source={require('../../assets/images/chatpic.png')} style={{
-                    width: width * 0.25,
-                    height: width * 0.25,
-                    borderWidth: 1,
-                    borderRadius: (width * 0.25) / 2,
-                    borderColor: colors.background_theme2,
-                    position: 'relative',
-                    left: (-width * 0.25) / 4,
-                  }} />
-                )}
-
-                <Rating
-                  readonly={true}
-                  de
-                  count={5}
-                  imageSize={16}
-                  startingValue={
-                    parseFloat(
-                      astroDetailes?.records[0]?.avg_rating,
-                    )
-                  }
-                  showRating={false}
-                  selectedColor={colors.background_theme2}
-                  style={{ paddingVertical: 10, position: 'relative', alignSelf: 'center', alignContent: 'center', right: 19 }}
-                />
-              </View>
-
-
-              <View
-                style={{
-                  flex: 1,
-                  // position: 'relative',
-                  justifyContent: 'flex-start',
-                  left: (-width * 0.25) / 2.5,
-                  // marginTop:8
-                }}>
-                <View
-                  style={{
-                    flex: 0,
-                    flexDirection: 'row',
-                    // alignItems: 'center',
-                    // justifyContent: 'space-around',
-                    position: 'relative',
-                    // bottom: 12,
-                  }}>
-                  <Text
-                    style={{
-                      width: '100%',
-                      marginLeft: 5,
-                      fontSize: 16,
-                      color: colors.black_color,
-                      fontFamily: fonts.medium,
-                      fontWeight: '400'
-                    }}>
-                    {astroData?.owner_name}
-                  </Text>
-
-                  <TouchableOpacity
-                    style={{
-                      flex: 0,
-                      width: '40%',
-                      paddingVertical: 2,
-                      backgroundColor: colors.background_theme4,
-                      borderRadius: 20,
-                      right: width * 0.10,
-                    }}>
-                    <Text
-                      style={{
-                        fontSize: 13,
-                        color: colors.black_color,
-                        fontFamily: fonts.medium,
-                        textAlign: 'center',
-                      }}>
-                      Follow
-                    </Text>
-
-                  </TouchableOpacity>
-                </View>
-
-                <Text
-                  style={{
-                    width: '100%',
-                    marginLeft: 5,
-                    fontSize: 12,
-                    color: colors.black_color,
-                    fontFamily: fonts.medium,
-                  }}>
-                  {[
-                    ...[
-                      astroDetailes?.mainexpertise.map(item => item.name),
-                    ],
-                  ].join(',')}
-                </Text>
-
-
-                <Text
-                  style={{
-                    width: '100%',
-                    marginLeft: 5,
-                    fontSize: 12,
-                    color: colors.black_color,
-                    fontFamily: fonts.medium,
-                  }}>
-                  {astroDetailes?.records[0]?.language}
-                </Text>
-
-
-                <Text
-                  style={{
-                    width: '100%',
-                    marginLeft: 5,
-                    fontSize: 12,
-                    color: colors.black_color,
-                    fontFamily: fonts.medium,
-                  }}>
-                  {`Exp: ${astroDetailes?.records[0]?.experience}-Years`}
-                </Text>
-
-
-                <Text
-                  style={{
-                    fontSize: 14,
-                    color: colors.black_color,
-                    fontFamily: fonts.medium,
-                    marginLeft: 5,
-                  }}>
-                  {`₹ ${parseFloat(astroDetailes?.records[0]?.call_commission) +
-                    parseFloat(astroDetailes?.records[0]?.call_price_m)
-                    }/min`}
-                </Text>
-              </View>
-
-            </View>
-            <View style={{
-              width: '90%', height: 1, alignSelf: 'stretch', borderBottomColor: colors.gray2, alignSelf: 'center',
-              borderBottomWidth: 0.5,
-            }} />
-            <View
-              style={{
-                flex: 0,
-                width: '95%',
-                alignSelf: 'center',
-                backgroundColor: colors.background_theme1,
-              }}>
-              <View
-                style={{
-                  flex: 0,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  // marginBottom: 15,
-                  alignSelf: 'center'
-                }}>
-                <View style={{ flex: 0.6 }}>
-                  <View
-                    style={{
-                      flex: 0.6,
-                      width: '90%',
-
-                      flexDirection: 'row',
-                      // alignItems: 'center',
-                      alignSelf: 'center',
-                      alignContent: 'center',
-                      marginVertical: 5,
-                      justifyContent: 'space-around',
-                      marginLeft: '60%'
-
-                    }}>
-                    <View>
-                      <Text
-                        style={{
-                          fontSize: 14,
-                          color: colors.black_color,
-                          fontFamily: fonts.medium,
-                          marginLeft: 10,
-                        }}>
-                        {`₹ ${parseFloat(astroDetailes?.records[0]?.call_commission) +
-                          parseFloat(astroDetailes?.records[0]?.call_price_m)
-                          }/min`}
-                      </Text>
-                      <View style={{
-                        flexDirection: 'row',
-                        flex: 0,
-                        marginVertical: height * 0.01,
-                        paddingVertical: 2,
-                        paddingHorizontal: 1,
-                        backgroundColor: colors.background_theme4,
-                        borderRadius: 10,
-                        // right: width * 0.10,
-                        justifyContent: 'space-around'
-                      }}>
-                        <TouchableOpacity
-                          disabled={chatStatus == 'Busy At' || chatStatus == 'Offline'}
-                          onPress={() => check_wallet({ purpose: "chat" })}
-                          style={{
-                            flex: 1,
-                            width: '100%',
-                            paddingVertical: 15,
-                            paddingHorizontal: 10,
-                            backgroundColor: colors.background_theme4,
-                            borderRadius: 10,
-                            justifyContent: 'center',
-                            // justifyContent: 'space-between',
-                            alignContent: 'space-around'
-
-                            // right: width * 0.10,
-                            // direction:'ltr'
-                          }}>
-                          <Ionicons name={'chatbubble-ellipses-outline'} size={20} style={{ position: 'absolute', marginHorizontal: width * 0.01, alignSelf: 'flex-start', }} color={colors.black_color} />
-                          <Text
-                            style={{
-                              alignSelf: 'flex-end',
-                              fontSize: 13,
-                              color: colors.black_color,
-                              fontFamily: fonts.medium,
-                              position: 'absolute',
-                              right: 10
-                            }}>
-                            Chat
-                          </Text>
-
-                        </TouchableOpacity>
-
-                      </View>
-
-                    </View>
-                    <View style={{
-                      height: '100%',
-                      width: 1,
-                      backgroundColor: colors.black_color,
-                      alignSelf: 'center'
-                    }
-                    } />
-
-                    <View>
-                      <Text
-                        style={{
-                          fontSize: 14,
-                          color: colors.black_color,
-                          fontFamily: fonts.medium,
-                          marginLeft: 10,
-                        }}>
-                        {`₹ ${parseFloat(astroDetailes?.records[0]?.call_commission) +
-                          parseFloat(astroDetailes?.records[0]?.call_price_m)
-                          }/min`}
-                      </Text>
-                      <View style={{
-                        flexDirection: 'row', flex: 0,
-                        marginVertical: height * 0.01,
-                        paddingVertical: 2,
-                        paddingHorizontal: 1,
-                        backgroundColor: colors.background_theme4,
-                        borderRadius: 10,
-                        // right: width * 0.10,
-                        justifyContent: 'space-around'
-                      }}>
-                        <TouchableOpacity
-
-                          // disabled={current_status !== "Busy" || current_status_call == 'Online'}
-                          // onPress={() => check_wallet()}
-
-                          onPress={() => {
-                            // setModalVisible(false);
-                            check_wallet({ purpose: "call" })
-                            // {
-                            //   props.navigation.navigate('callIntakeForm', {
-                            //     data: astroData,
-                            //   });
-                            // }
-                          }}
-
-                          style={{
-                            flex: 1,
-                            width: '50%',
-                            paddingVertical: 15,
-                            paddingHorizontal: 15,
-                            backgroundColor: colors.background_theme4,
-                            borderRadius: 10,
-                            justifyContent: 'center',
-                            // justifyContent: 'space-between',
-                            alignContent: 'space-around'
-
-                            // right: width * 0.10,
-                            // direction:'ltr'
-                          }}>
-                          <Ionicons name={'call-outline'} size={20} style={{ position: 'absolute', marginHorizontal: width * 0.01, alignSelf: 'flex-start', }} color={colors.black_color} />
-
-                          <Text
-                            style={{
-                              alignSelf: 'flex-end',
-                              fontSize: 13,
-                              color: colors.black_color,
-                              fontFamily: fonts.medium,
-                              position: 'absolute',
-                              right: 10
-                            }}>
-                            Call
-                          </Text>
-
-                        </TouchableOpacity>
-
-                      </View>
-
-                    </View>
-
-                  </View>
-                </View>
-                <View
-                  style={{
-                    flex: 0.4,
-                    justifyContent: 'center',
-                    // alignItems: 'center',
-                  }}>
-                </View>
-              </View>
-              <Text
-                style={{
-                  fontSize: 14,
-                  color: colors.black_color,
-                  fontFamily: fonts.semi_bold,
-                  marginBottom: 10
-                }}>
-                User Reviews
-              </Text>
-
-              {reviewData &&
-                reviewData.map((item, index) => (
-                  <View style={{
-                    paddingVertical: width * 0.02,
-                    paddingHorizontal: width * 0.04,
-                    // padding: width * 0.02,
-                    borderRadius: 10,
-                    backdropColor: 'blue',
-                    elevation: 5,
-                    // borderColor: colors.background_theme2,
-                    backgroundColor: colors.background_theme1,
-                    shadowColor: colors.black_color + '80',
-                    marginBottom: 15
-                  }}>
-                    <View
-                      key={index}
-                      style={{
-                        flex: 0,
-                        flexDirection: 'row',
-                        marginBottom: 2,
-                        alignItems: 'center',
-                        bottom: 0,
-                        width: '45%',
-                        elevation: 3,
-                        shadowColor: colors.black_color4,
-                      }}>
-                      <View>
-                        <Image
-                          // source={item.user_profile_image != null ? { uri: item.user_profile_image } : require('../../assets/images/Pro_pic.png')}
-                          source={require('../../assets/images/Pro_pic.png')}
-                          style={{
-                            width: width * 0.10,
-                            height: width * 0.10,
-                            borderWidth: 0.5,
-                            borderColor: colors.background_theme2,
-                            borderRadius: 100,
-                            position: 'absolute',
-                          }}
-                        />
-                      </View>
-                    </View>
-                    <View style={{ justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: width * 0.04, flexDirection: 'row', width: '85%', left: width * 0.09, marginLeft: '10%' }}>
-                      <Text
-                        style={{
-                          fontSize: 14,
-                          color: colors.black_color,
-                          fontFamily: fonts.semi_bold,
-                          textAlign: 'center',
-                          marginHorizontal: 10,
-                          marginVertical: 8,
-                        }}>
-                        {item.username}
-                      </Text>
-                      <Entypo name={'dots-three-vertical'} size={18} style={{ marginTop: 5 }} color={colors.black_color} />
-                    </View>
-
-                    <View style={{ flex: 1, bottom: 0, marginVertical: width * 0.02 }}>
-                      <Rating
-                        readonly={true}
-                        count={5}
-                        imageSize={16}
-                        startingValue={parseFloat(item.star).toFixed(1)}
-                        ratingColor={colors.background_theme4}
-                        tintColor={colors.white_color}
-                        showRating={false}
-                        selectedColor={colors.yellow_color1}
-                        style={{ alignSelf: 'flex-start', marginVertical: 5 }}
-                      />
-                      <Text
-                        style={{
-                          // width: '40%',
-                          fontSize: 12,
-                          color: colors.black_color7,
-                          fontFamily: fonts.medium,
-                        }}>
-                        {item.rating_comment}
-                      </Text>
-                    </View>
-                    {/* </View> */}
-                  </View>
-                ))}
-            </View>
-
-          </ScrollView>
+          <FlatList
+            ListHeaderComponent={
+              <>
+                {profileInfo()}
+                {chatCallButtonInfo()}
+                {userReviews()}
+              </>
+            }
+          />
         )}
       </View>
       {walletModalInfo()}
@@ -931,6 +483,479 @@ const AstrologerDetailes = props => {
           </View>
         </View>
       </Modal >
+    )
+  }
+
+  function userReviews() {
+    const renderItem = ({ item }) => {
+      return (
+        <View style={{
+          paddingVertical: width * 0.02,
+          paddingHorizontal: width * 0.04,
+          borderRadius: 10,
+          elevation: 2,
+          backgroundColor: colors.background_theme1,
+          marginBottom: 10
+        }}>
+          <View
+            key={item.rating_id}
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              width: '100%',
+              shadowColor: colors.black_color4,
+            }}>
+            <View style={{ width: '15%' }}>
+              <View style={{ width: width * 0.1, height: width * 0.1, alignItems: 'center' }}>
+                <Image
+                  source={item.user_profile_image != null ? require('../../assets/images/logo.png') : require('../../assets/images/logo.png')}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    borderWidth: 0.5,
+                    borderColor: colors.background_theme2,
+                    borderRadius: 100,
+                    resizeMode: 'contain'
+                  }}
+                />
+              </View>
+            </View>
+            <View style={{ width: '85%' }}>
+              <Text
+                numberOfLines={1}
+                style={{
+                  fontSize: 14,
+                  color: colors.black_color,
+                  fontFamily: fonts.semi_bold,
+                }}>
+                {item.username}
+              </Text>
+            </View>
+          </View>
+          <Rating
+            readonly={true}
+            count={5}
+            imageSize={12}
+            startingValue={item.star}
+            showRating={false}
+            selectedColor={colors.background_theme2}
+            style={{ alignSelf: 'flex-start', marginVertical: 5 }}
+          />
+          <Text
+            style={{
+              fontSize: 12,
+              color: colors.black_color7,
+              fontFamily: fonts.medium,
+            }}>
+            {item.rating_comment}
+          </Text>
+        </View>
+      )
+    }
+    return (
+      <View
+        style={{
+          flex: 0,
+          paddingHorizontal: width * 0.04,
+          borderRadius: 20,
+          backgroundColor: colors.background_theme1
+        }}>
+        <Text
+          style={{
+            fontSize: 14,
+            color: colors.black_color,
+            fontFamily: fonts.semi_bold,
+            marginBottom: 10
+          }}>
+          User Reviews
+        </Text>
+
+        <FlatList data={reviewData}
+          renderItem={renderItem} />
+      </View>
+    )
+  }
+
+  function chatCallButtonInfo() {
+    return (
+      <View
+        style={{
+          flexDirection: 'row',
+          paddingHorizontal: width * 0.04,
+          borderRadius: 20,
+        }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            width: '100%',
+            marginVertical: 10,
+            justifyContent: 'space-between',
+          }}>
+
+          {purpose == 'popular' ?
+            (
+              <>
+                <View style={{ width: '47%', alignItems: 'center', justifyContent: 'center' }}>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      color: colors.black_color,
+                      fontFamily: fonts.medium,
+                      marginLeft: 10,
+                      marginBottom: 10,
+                    }}>
+                    {`₹ ${parseFloat(astroDetailes?.records[0]?.call_commission) +
+                      parseFloat(astroDetailes?.records[0]?.call_price_m)
+                      }/min`}
+                  </Text>
+                  <LinearGradient
+                    style={{
+                      width: '100%',
+                      paddingVertical: 10,
+                      paddingHorizontal: 10,
+                      borderRadius: 10,
+                      justifyContent: 'center',
+                      flexDirection: 'row',
+                      alignItems: 'center'
+                    }}
+                    colors={[colors.background_theme2, colors.yellow_color3]}>
+                    <TouchableOpacity
+                      disabled={chatStatus == 'Busy At' || chatStatus == 'Offline'}
+                      onPress={() => check_wallet({ purpose: "call" })}
+                      style={{
+
+                        flexDirection: 'row',
+                        alignItems: 'center'
+                      }}
+                    >
+                      <Ionicons name={'call'} size={20} color={colors.white_color} />
+                      <Text
+                        style={{
+                          fontSize: 13,
+                          color: colors.white_color,
+                          fontFamily: fonts.medium,
+                          marginHorizontal: 5
+                        }}>
+                        {callStatus}
+                      </Text>
+                    </TouchableOpacity>
+                  </LinearGradient>
+                </View>
+                <View style={{ width: '47%', alignItems: 'center', justifyContent: 'center' }}>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      color: colors.black_color,
+                      fontFamily: fonts.medium,
+                      marginLeft: 10,
+                      marginBottom: 10,
+                    }}>
+                    {`₹ ${parseFloat(astroDetailes?.records[0]?.chat_commission) +
+                      parseFloat(astroDetailes?.records[0]?.chat_price_m)
+                      }/min`}
+                  </Text>
+                  <LinearGradient
+                    style={{
+                      width: '100%',
+                      paddingVertical: 10,
+                      paddingHorizontal: 10,
+                      borderRadius: 10,
+                      justifyContent: 'center',
+                      flexDirection: 'row',
+                      alignItems: 'center'
+                    }}
+                    colors={[colors.background_theme2, colors.yellow_color3]}>
+                    <TouchableOpacity
+                      disabled={chatStatus == 'Busy At' || chatStatus == 'Offline'}
+                      onPress={() => check_wallet({ purpose: "call" })}
+                      style={{
+
+                        flexDirection: 'row',
+                        alignItems: 'center'
+                      }}
+                    >
+                      <Ionicons name={'chatbubble-ellipses'} size={20} color={colors.white_color} />
+                      <Text
+                        style={{
+                          fontSize: 13,
+                          color: colors.white_color,
+                          fontFamily: fonts.medium,
+                          marginHorizontal: 5
+                        }}>
+                        {chatStatus}
+                      </Text>
+                    </TouchableOpacity>
+                  </LinearGradient>
+                </View>
+              </>
+            ) :
+            purpose == "call" ? (
+              <LinearGradient
+                style={{ width: '100%', borderRadius: 10, alignItems: 'center', justifyContent: 'center' }}
+                colors={[colors.background_theme2, colors.yellow_color3]}>
+                <TouchableOpacity
+                  disabled={chatStatus == 'Busy At' || chatStatus == 'Offline'}
+                  onPress={() => check_wallet({ purpose: "call" })}
+                  style={{
+                    width: '100%',
+                    paddingVertical: 10,
+                    paddingHorizontal: 10,
+                    borderRadius: 10,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    flexDirection: 'row',
+                    alignItems: 'center'
+                  }}>
+                  <Ionicons name={'call'} size={20} color={colors.white_color} style={{ marginRight: 5 }} />
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      color: colors.white_color,
+                      fontFamily: fonts.medium
+                    }}>
+                    Call
+                  </Text>
+                  <View style={{
+                    width: 1, border: 1, height: '100%', backgroundColor: colors.white_color,
+                    marginHorizontal: 10
+                  }} />
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      color: colors.white_color,
+                      fontFamily: fonts.medium,
+                    }}>
+                    {`₹ ${parseFloat(astroDetailes?.records[0]?.call_commission) +
+                      parseFloat(astroDetailes?.records[0]?.call_price_m)
+                      }/min`}
+                  </Text>
+                </TouchableOpacity>
+              </LinearGradient>
+            ) :
+              (
+                <LinearGradient
+                  style={{ width: '100%', borderRadius: 10, alignItems: 'center', justifyContent: 'center' }}
+                  colors={[colors.background_theme2, colors.yellow_color3]}>
+                  <TouchableOpacity
+                    disabled={chatStatus == 'Busy At' || chatStatus == 'Offline'}
+                    onPress={() => check_wallet({ purpose: "chat" })}
+                    style={{
+                      width: '100%',
+                      paddingVertical: 10,
+                      paddingHorizontal: 10,
+                      borderRadius: 10,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      flexDirection: 'row',
+                      alignItems: 'center'
+                    }}>
+                    <Ionicons name={'chatbubble-ellipses'} size={20} color={colors.white_color} style={{ marginRight: 5 }} />
+                    <Text
+                      style={{
+                        fontSize: 14,
+                        color: colors.white_color,
+                        fontFamily: fonts.medium
+                      }}>
+                      Chat
+                    </Text>
+                    <View style={{
+                      width: 1, border: 1, height: '100%', backgroundColor: colors.white_color,
+                      marginHorizontal: 10
+                    }} />
+                    <Text
+                      style={{
+                        fontSize: 14,
+                        color: colors.white_color,
+                        fontFamily: fonts.medium,
+                      }}>
+                      {`₹ ${parseFloat(astroDetailes?.records[0]?.chat_commission) +
+                        parseFloat(astroDetailes?.records[0]?.chat_price_m)
+                        }/min`}
+                    </Text>
+                  </TouchableOpacity>
+                </LinearGradient>
+              )
+          }
+        </View>
+      </View>
+    )
+  }
+
+  function profileInfo() {
+    return (
+      <View>
+        <View
+          style={{
+            flex: 0,
+            flexDirection: 'row',
+            paddingHorizontal: width * 0.04,
+            paddingVertical: width * 0.05,
+            borderRadius: 20,
+            backgroundColor: colors.background_theme1
+          }}>
+          {/* Profile and rating */}
+          <View
+            style={{
+              width: '30%',
+              justifyContent: 'center',
+              alignItems: 'center',
+              borderRadius: 20,
+            }}>
+            <View style={{ width: width * 0.25 }}>
+              {astroData.image !== null ? (
+                <Image
+                  source={{ uri: astroData?.image }}
+                  style={{
+                    width: '100%',
+                    height: width * 0.25,
+                    borderWidth: 2,
+                    borderRadius: (width * 0.25) / 2,
+                    borderColor: colors.white_color,
+                    position: 'relative',
+                    elevation: 5
+                  }}
+                />
+              ) : (
+                <Image source={require('../../assets/images/logo.png')} style={{
+                  width: '100%',
+                  height: width * 0.25,
+                  borderWidth: 1,
+                  borderRadius: (width * 0.25) / 2,
+                  borderColor: colors.background_theme2,
+                  position: 'relative'
+                }} />
+
+              )}
+            </View>
+            <Rating
+              readonly={true}
+              count={5}
+              imageSize={16}
+              startingValue={
+                parseFloat(
+                  astroDetailes?.records[0]?.avg_rating,
+                )
+              }
+              showRating={false}
+              selectedColor={colors.background_theme2}
+              style={{ marginTop: 10 }}
+            />
+          </View>
+          {/* Profile and rating */}
+
+          {/*................................ AStrologer details ................................*/}
+          {/* name and follow button */}
+          <View
+            style={{
+              width: '70%',
+              paddingLeft: 10
+              // backgroundColor: 'red'
+            }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+              }}>
+              <Text
+                style={{
+                  fontSize: 16,
+                  width: '70%',
+                  color: colors.background_theme2,
+                  fontFamily: fonts.medium,
+                  fontWeight: '400'
+                }}>
+                {astroData?.owner_name}
+              </Text>
+              <TouchableOpacity
+                style={{
+                  width: '30%',
+                  paddingVertical: 2,
+                  backgroundColor: colors.background_theme4,
+                  borderRadius: 20,
+                }}>
+                <Text
+                  style={{
+                    fontSize: 13,
+                    color: colors.black_color,
+                    fontFamily: fonts.medium,
+                    textAlign: 'center',
+                  }}>
+                  Follow
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <View style={{ marginTop: 2 }}>
+              <Text
+                style={{
+                  width: '100%',
+                  fontSize: 12,
+                  color: colors.black_color,
+                  fontFamily: fonts.medium,
+                }}>
+                {[
+                  ...[
+                    astroDetailes?.mainexpertise.map(item => item.name),
+                  ],
+                ].join(', ')}
+              </Text>
+              <Text
+                style={{
+                  width: '100%',
+                  fontSize: 12,
+                  color: colors.black_color,
+                  fontFamily: fonts.medium,
+                }}>
+                {astroDetailes?.records[0]?.language}
+              </Text>
+              <Text
+                style={{
+                  width: '100%',
+                  fontSize: 12,
+                  color: colors.black_color,
+                  fontFamily: fonts.medium,
+                }}>
+                {`Exp: ${astroDetailes?.records[0]?.experience} Years`}
+              </Text>
+              <Text
+                style={{
+                  fontSize: 16,
+                  color: colors.black_color,
+                  fontFamily: fonts.medium,
+                  marginTop: 3
+                }}>
+                {`₹ ${parseFloat(astroDetailes?.records[0]?.call_commission) +
+                  parseFloat(astroDetailes?.records[0]?.call_price_m)
+                  }/min`}
+              </Text>
+            </View>
+          </View>
+        </View>
+        <View style={{ paddingHorizontal: width * 0.04 }}>
+          <Text
+            style={{
+              fontSize: 16,
+              color: colors.black_color,
+              fontFamily: fonts.semi_bold
+            }}>
+            Bio
+          </Text>
+          <Text
+            style={{
+              fontSize: 12,
+              color: colors.gray2,
+              fontFamily: fonts.medium,
+            }}>
+            {astroData.short_bio}
+          </Text>
+        </View>
+
+        <View style={{
+          width: '90%',
+          alignSelf: 'center',
+          borderBottomColor: colors.gray2,
+          borderBottomWidth: 0.5,
+        }} />
+      </View >
     )
   }
 };

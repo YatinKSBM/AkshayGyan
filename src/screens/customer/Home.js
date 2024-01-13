@@ -9,6 +9,7 @@ import {
   Animated,
   ImageBackground,
   RefreshControl,
+  FlatList,
 } from 'react-native';
 import React from 'react';
 import Carousel from 'react-native-reanimated-carousel';
@@ -34,18 +35,18 @@ import HomeSimmer from '../../components/HomeSimmer';
 import HomeHeader from '../../components/HomeHeader';
 import { connect } from 'react-redux';
 import * as UserActions from '../../redux/actions/CustomerActions';
+import { TextInput } from 'react-native-gesture-handler';
 
 const { width, height } = Dimensions.get('screen');
 
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
 const Home = props => {
-
-  console.log('firebase id====',props.firebaseId);
   const [bannerData, setBannerData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [astoListData, setAstroListData] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+
   useEffect(() => {
     props.navigation.setOptions({
       headerShown: false,
@@ -118,24 +119,7 @@ const Home = props => {
     props.navigation.navigate('astrologerList');
   };
 
-  const redner_banner = ({ index, item }) => {
-    // console.log(item);
-    return (
-      <View
-        style={{
-          flex: 1,
-          // borderWidth: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        <Image
-          source={{ uri: item.sub_cat_img }}
-          style={{ width: width * 0.95, height: width / 2.3, borderRadius: 10 }}
-          resizeMode="stretch"
-        />
-      </View>
-    );
-  };
+
 
   const on_referesh = async () => {
     setRefreshing(true);
@@ -180,567 +164,862 @@ const Home = props => {
         barStyle="light-content"
       />
       <View style={{ flex: 1, backgroundColor: colors.black_color1 }}>
-        <HomeHeader navigation={props.navigation} headerTitle={"Akshyaa Gyaan"} />
-        <ScrollView
-          showsVerticalScrollIndicator={false}
+        <HomeHeader navigation={props.navigation} headerTitle={"Akshya Gyaan"} />
+        <FlatList
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={on_referesh} />
-          }>
-          {bannerData && (
-            <Carousel
-              loop
-              width={width}
-              height={width / 2}
-              autoPlay={true}
-              data={bannerData}
-              scrollAnimationDuration={1500}
-              autoPlayInterval={5000}
-              // onSnapToItem={index => console.log('current index:', index)}
-              renderItem={redner_banner}
-            />
-          )}
-          <ScrollView
-            nestedScrollEnabled
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{
-              flex: 0,
-              flexDirection: 'row',
-              alignItems: 'center',
-              paddingVertical: 5,
-              justifyContent: 'space-between',
-              alignContent: 'center',
-              // backgroundColor:'pink',
-              alignSelf: 'center',
-              width: '96%',
-              left: 8
-            }}>
-            <View >
-              <TouchableOpacity
-                onPress={() => props.navigation.navigate('kundli')}
-                style={styles.panchangContainer}>
-                <Image
-                  source={require('../../assets/images/kundli.png')}
-                  style={styles.panchangImage}
-                />
-              </TouchableOpacity>
-              <Text style={styles.punchangText}>Kundli</Text>
-            </View>
-            <View>
-              <TouchableOpacity
-                onPress={() => props.navigation.navigate('matching')}
-                style={styles.panchangContainer}>
-                <Image
-                  source={require('../../assets/images/matching.png')}
-                  style={styles.panchangImage}
-                />
-              </TouchableOpacity>
-              <Text style={styles.punchangText}>Matching</Text>
-            </View>
-            <View>
-              <TouchableOpacity
-                onPress={() => props.navigation.navigate('selectSign')}
-                style={styles.panchangContainer}>
-                <Image
-                  source={require('../../assets/images/Horoscope1.png')}
-                  style={styles.panchangImage}
-                />
-              </TouchableOpacity>
-              <Text style={styles.punchangText}>Horoscope</Text>
-            </View>
-            <View>
-              <TouchableOpacity
-                onPress={() => props.navigation.navigate('tarotCard')}
-                style={styles.panchangContainer}>
-                <Image
-                  source={require('../../assets/images/tarot-card.png')}
-                  style={styles.panchangImage}
-                />
-
-              </TouchableOpacity>
-              <Text style={styles.punchangText}>Tarot card</Text>
-            </View>
-          </ScrollView>
-
-          <View
-            style={{
-              flex: 0,
-              width: '95%',
-              alignSelf: 'center',
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              paddingVertical: 15,
-
-            }}>
-            <Text
-              style={{
-                fontSize: 18,
-                color: colors.black_color,
-                fontFamily: fonts.bold,
-                fontWeight: '600'
-              }}>
-              Chat With Astrologer
-            </Text>
-            <TouchableOpacity
-              onPress={astrologer_list}
-              style={{
-                paddingHorizontal: 10,
-                paddingVertical: 3,
-                borderWidth: 1,
-                borderColor: colors.background_theme2,
-                borderRadius: 20,
-              }}>
-              <Text
-                style={{
-                  fontSize: 12,
-                  color: colors.background_theme2,
-                  fontFamily: fonts.bold,
-                  fontWeight: '600'
-                }}>
-                VIEW ALL
-              </Text>
-            </TouchableOpacity>
-          </View>
-          {isLoading && <HomeSimmer isLoading={false} />}
-
-          {!isLoading && (
-            <ScrollView
-              horizontal
-              nestedScrollEnabled
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{
-                flex: 0,
-                flexDirection: 'row',
-                alignItems: 'center',
-                paddingVertical: 15,
-              }}>
-              {astoListData &&
-                astoListData.map((item, index) => (
-                  <TouchableOpacity
-                    key={index}
-                    onPress={() =>
-                      props.navigation.navigate('astrologerDetailes', {
-                        data: item,
-                        type: 'chat',
-                      })
-                    }
-                    style={{
-                      width: width * 0.4,
-                      height: width * 0.4,
-                      borderRadius: 10,
-                      marginHorizontal: 10,
-                      backgroundColor: colors.white_color,
-                      elevation: 5,
-                      borderColor: '#000',
-                      justifyContent: 'center',
-                      shadowColor: colors.black_color4,
-                      shadowOffset: {
-                        width: 2,
-                        height: 1,
-                      },
-                      shadowOpacity: 0.2,
-                    }}>
-                    <View
-                      style={{
-                        flex: 0,
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        marginHorizontal: height * 0.01,
-                      }}>
-                      <Image
-                        source={require('../../assets/images/green-button.png')}
-                        style={{ width: width * 0.07, height: width * 0.07, left: 0, top: 10 }}
-                      />
-                      {/* {item.offer_deal != '0' && (
-                        <View
-                          style={{
-                            flex: 0,
-                            backgroundColor: colors.background_theme2,
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            alignSelf: 'flex-start',
-                            paddingHorizontal: 5,
-                            borderTopRightRadius: 10,
-                            borderBottomLeftRadius: 10,
-                          }}>
-                          <Text
-                            style={{
-                              fontSize: 14,
-                              color: colors.white_color,
-                              fontFamily: fonts.medium,
-                            }}>
-                            {item.offer_deal}
-                          </Text>
-                        </View>
-                      )} */}
-                    </View>
-                    <View
-                      style={{
-                        flex: 0,
-                        position: 'relative',
-                        top: -width * 0.03,
-                      }}>
-                      {/* <View
-                        style={{
-                          backgroundColor:
-                            item.astro_status == 'Online'
-                              ? colors.green_color2
-                              : colors.yellow_color1,
-                          alignSelf: 'flex-end',
-                          paddingHorizontal: 5,
-                          borderRadius: 10,
-                          position: 'relative',
-                          top: width * 0.07,
-                          right: width * 0.04,
-                          zIndex: 2,
-                        }}>
-                        <Text
-                          style={{
-                            fontSize: 10,
-                            color: colors.white_color,
-                            fontFamily: fonts.medium,
-                          }}>
-                          {item.astro_status}
-                        </Text>
-                      </View> */}
-
-                      <Image
-                        source={{ uri: item.image }}
-                        style={{
-                          width: width * 0.2,
-                          height: width * 0.2,
-                          borderRadius: (width * 0.22) / 2,
-                          borderWidth: 1,
-                          borderColor: colors.background_theme2,
-                          alignSelf: 'center',
-                          overflow: 'hidden',
-                        }}
-                      />
-                    </View>
-                    <View
-                      style={{
-                        flex: 0,
-                        position: 'relative',
-                        bottom: width * 0.03,
-                      }}>
-                      <Text
-                        style={{
-                          fontSize: 15,
-                          color: colors.black_color,
-                          fontFamily: fonts.medium,
-                          textAlign: 'center',
-                          fontWeight: '600',
-                          marginTop: 2
-                        }}>
-                        {item.owner_name}
-                      </Text>
-                      <View
-                        style={{
-                          flex: 0,
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          padding: 5,
-                          marginTop: 11,
-
-                        }}>
-                        <View
-                          style={{
-                            flex: 0.43,
-                            flexDirection: 'row',
-                            alignItems: 'center',
-
-
-                          }}>
-                          <Text
-                            style={{
-                              fontSize: 12,
-                              color: colors.black_color,
-                              fontFamily: fonts.medium,
-                              fontWeight: '600'
-                            }}>
-                            {`${parseFloat(item.avg_rating).toFixed(1)}/5`}
-                          </Text>
-                          <Image
-                            source={require('../../assets/images/star.png')}
-                            style={{ width: 18, height: 18 }}
-                          />
-                        </View>
-                        <View
-                          style={{
-                            width: 1,
-                            height: 12,
-                            backgroundColor: colors.black_color7,
-                          }}
-                        />
-                        <View style={{ flex: 0.5 }}>
-                          <Text
-                            style={{
-                              fontSize: 12,
-                              color: colors.red_color2,
-                              fontFamily: fonts.medium,
-                              textAlign: 'center',
-                            }}>
-                            {`Free ${item.free_minut} min`}
-                          </Text>
-                        </View>
-                      </View>
-                    </View>
-                  </TouchableOpacity>
-                ))}
-            </ScrollView>
-          )}
-
-
-
-          {/* Popular Astrologer  Start*/}
-
-          <View
-            style={{
-              flex: 0,
-              width: '95%',
-              alignSelf: 'center',
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              paddingVertical: 15,
-
-            }}>
-            <Text
-              style={{
-                fontSize: 18,
-                color: colors.black_color,
-                fontFamily: fonts.bold,
-                fontWeight: '600'
-              }}>
-              Popular Astrologer
-            </Text>
-            <TouchableOpacity
-              onPress={astrologer_list}
-              style={{
-                paddingHorizontal: 10,
-                paddingVertical: 3,
-                borderWidth: 1,
-                borderColor: colors.background_theme2,
-                borderRadius: 20,
-              }}>
-              <Text
-                style={{
-                  fontSize: 12,
-                  color: colors.background_theme2,
-                  fontFamily: fonts.bold,
-                  fontWeight: '600'
-                }}>
-                VIEW ALL
-              </Text>
-            </TouchableOpacity>
-          </View>
-          {isLoading && <HomeSimmer isLoading={false} />}
-
-          {!isLoading && (
-            <ScrollView
-              horizontal
-              nestedScrollEnabled
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{
-                flex: 0,
-                flexDirection: 'row',
-                alignItems: 'center',
-                paddingVertical: 15,
-                marginBottom: 30
-              }}>
-              {astoListData &&
-                astoListData.map((item, index) => (
-                  <TouchableOpacity
-                    key={index}
-                    onPress={() =>
-                      props.navigation.navigate('astrologerDetailes', {
-                        data: item,
-                        type: 'call',
-                      })
-                    }
-                    style={{
-                      width: width * 0.4,
-                      height: width * 0.6,
-                      borderRadius: 10,
-                      marginHorizontal: 10,
-                      marginHorizontal: 10,
-                      // shadowColor: colors.black_color4,
-                      // shadowOffset: {
-                      //   width: 2,
-                      //   height: 1,
-                      // },
-                      // shadowOpacity: 0.2,
-                      shadowRadius: 4,
-                      overflow: 'hidden',
-                      elevation: 2
-                    }}>
-                    <ImageBackground
-                      source={{ uri: item.image }}
-                      resizeMode='cover'
-                      style={{ width: '100%', height: '100%', backgroundColor: '#fff', justifyContent: 'flex-end' }}
-                    >
-                      <View
-                        style={{
-                          backgroundColor: colors.yellow_color5,
-                          paddingHorizontal: 10
-                        }}>
-                        <Text
-                          numberOfLines={1}
-                          style={{
-                            fontSize: 14,
-                            color: colors.black_color,
-                            fontFamily: fonts.medium,
-                            textAlign: 'center',
-                            marginVertical: '6%'
-                          }}>
-                          {item.owner_name}
-                        </Text>
-                        {/* <Image
-                        source={require('../../assets/images/green-button.png')}
-                        style={{width: width * 0.07, height: width * 0.07}}
-                      /> */}
-                        {/* {item.offer_deal != '0' && (
-                        <View
-                          style={{
-                            flex: 0,
-                            backgroundColor: colors.background_theme2,
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            alignSelf: 'flex-start',
-                            paddingHorizontal: 5,
-                            borderTopRightRadius: 10,
-                            borderBottomLeftRadius: 10,
-                          }}>
-                          <Text
-                            style={{
-                              fontSize: 14,
-                              color: colors.white_color,
-                              fontFamily: fonts.medium,
-                            }}>
-                            {item.offer_deal}
-                          </Text>
-                        </View>
-                      )} */}
-                      </View>
-                      {/* <View
-                      style={{
-                        flex: 0,
-                        position: 'relative',
-                        top: -width * 0.04,
-                      }}>
-                      <View
-                        style={{
-                          backgroundColor:
-                            item.astro_status == 'Online'
-                              ? colors.green_color2
-                              : colors.yellow_color1,
-                          alignSelf: 'flex-end',
-                          paddingHorizontal: 5,
-                          borderRadius: 10,
-                          position: 'relative',
-                          top: width * 0.07,
-                          right: width * 0.04,
-                          zIndex: 2,
-                        }}>
-                        <Text
-                          style={{
-                            fontSize: 10,
-                            color: colors.white_color,
-                            fontFamily: fonts.medium,
-                          }}>
-                          {item.astro_status}
-                        </Text>
-                      </View>
-                      <Image
-                        source={{uri: item.image}}
-                        style={{
-                          width: width * 0.2,
-                          height: width * 0.2,
-                          borderRadius: (width * 0.22) / 2,
-                          borderWidth: 1,
-                          borderColor: colors.background_theme2,
-                          alignSelf: 'center',
-                          overflow: 'hidden',
-                        }}
-                      />
-                    </View>
-                    <View
-                      style={{
-                        flex: 0,
-                        position: 'relative',
-                        bottom: width * 0.03,
-                      }}>
-                      <Text
-                        style={{
-                          fontSize: 14,
-                          color: colors.black_color,
-                          fontFamily: fonts.medium,
-                          textAlign: 'center',
-                        }}>
-                        {item.owner_name}
-                      </Text>
-                      <View
-                        style={{
-                          flex: 0,
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          padding: 5,
-                        }}>
-                        <View
-                          style={{
-                            flex: 0.43,
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                          }}>
-                          <Text
-                            style={{
-                              fontSize: 12,
-                              color: colors.black_color6,
-                              fontFamily: fonts.medium,
-                            }}>
-                            {`${parseFloat(item.avg_rating).toFixed(1)}/5`}
-                          </Text>
-                          <Image
-                            source={require('../../assets/images/star.png')}
-                            style={{width: 18, height: 18}}
-                          />
-                        </View>
-                        <View
-                          style={{
-                            width: 1,
-                            height: 12,
-                            backgroundColor: colors.black_color7,
-                          }}
-                        />
-                        <View style={{flex: 0.5}}>
-                          <Text
-                            style={{
-                              fontSize: 12,
-                              color: colors.red_color1,
-                              fontFamily: fonts.medium,
-                              textAlign: 'center',
-                            }}>
-                            {`Free ${item.free_minut} min`}
-                          </Text>
-                        </View>
-                      </View>
-                    </View> */}
-                    </ImageBackground>
-
-                  </TouchableOpacity>
-                ))}
-            </ScrollView>
-          )}
-
-        </ScrollView>
+          }
+          ListHeaderComponent={
+            <>
+              {searchBarInfo()}
+              {bannerData && bannerInfo()}
+              {freeInsights()}
+              {astoListData && astroForChat()}
+              {astoListData && astroForCall()}
+              {astoListData && popularAstrologers()}
+            </>
+          } />
       </View>
-
     </View >
   );
-};
 
+  function popularAstrologers() {
+    const renderItem = ({ item }) => {
+      const formatFollowers = (followers) => {
+        if (followers >= 1000) {
+          const formattedValue = Math.floor(followers / 1000); // Get the floor value for thousands
+          return `${formattedValue}k`;
+        }
+        return followers.toString();
+      };
+
+      return (
+        <TouchableOpacity
+          activeOpacity={0.8}
+          key={item.id}
+          onPress={() =>
+            props.navigation.navigate('astrologerDetailes', {
+              data: item,
+              type: 'popular'
+            })
+          }
+          style={{
+            borderRadius: width * 0.03,
+            marginHorizontal: width * 0.02,
+            backgroundColor: colors.white_color,
+            elevation: 5,
+            borderColor: '#000',
+            justifyContent: 'center',
+            paddingVertical: width * 0.02,
+            paddingHorizontal: width * 0.03,
+            width: width * 0.35,
+            position: 'relative'
+          }}>
+          <View
+            style={{
+              position: 'absolute',
+              left: 1,
+              top: 1,
+              zIndex: 3
+            }}>
+            <Image
+              source={require('../../assets/images/green-button.png')}
+              style={{ width: width * 0.07, height: width * 0.07, }}
+            />
+          </View>
+          <View
+            style={{
+              flex: 0,
+              width: width * 0.2,
+              height: width * 0.2,
+              alignSelf: 'center',
+              borderRadius: 100,
+              overflow: 'hidden',
+              borderWidth: 2.5,
+              borderColor: colors.white_color,
+              elevation: 5
+            }}>
+            <Image
+              source={item.image ? { uri: item.image } : require('../../assets/images/logo.png')}
+              style={{
+                width: '100%',
+                height: '100%',
+                resizeMode: 'cover'
+              }}
+            />
+          </View>
+          <View style={{ marginTop: width * 0.02 }}>
+            <Text
+              numberOfLines={1}
+              style={{
+                fontSize: 14,
+                color: colors.black_color7,
+                fontFamily: fonts.medium,
+                textAlign: 'center',
+                fontWeight: '600',
+                marginTop: 2,
+                textTransform: 'capitalize'
+              }}>
+              {item.owner_name}
+            </Text>
+            <View style={{
+              flexDirection: 'row', justifyContent: 'space-between',
+              marginVertical: 3, alignItems: 'center'
+            }}>
+              <View style={{
+                flexDirection: 'row', justifyContent: 'center', width: '50%'
+              }}>
+                <Text
+                  numberOfLines={1}
+                  style={{
+                    fontSize: width * 0.03,
+                    color: colors.black_color,
+                    fontFamily: fonts.medium,
+                    fontWeight: '600'
+                  }}>
+                  {`${parseFloat(item.avg_rating).toFixed(1)}/5`}
+                </Text>
+                <Image
+                  source={require('../../assets/images/star.png')}
+                  style={{ width: width * 0.04, height: width * 0.04 }}
+                />
+              </View>
+              <View
+                style={{
+                  width: 1,
+                  height: width * 0.05,
+                  backgroundColor: colors.black_color4,
+                  marginRight: 2
+                }}
+              />
+              <View style={{ flexDirection: 'row', justifyContent: 'center', width: '40%' }}>
+                <Ionicons name="people" style={{ fontSize: width * 0.04, color: colors.background_theme4 }} />
+                <Text
+                  style={{
+                    fontSize: width * 0.03,
+                    fontFamily: fonts.semi_bold,
+                    color: colors.black_color7,
+                    marginLeft: width * 0.01
+                  }}>
+                  {formatFollowers(item.followers)}
+                </Text>
+              </View>
+            </View>
+          </View >
+        </TouchableOpacity >
+      )
+    }
+    return (
+      <>
+        <View
+          style={{
+            width: '100%',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            paddingVertical: 15,
+            paddingTop: 5,
+            paddingBottom: 15,
+            paddingHorizontal: 15
+          }}>
+          <Text
+            style={{
+              fontSize: width * 0.042,
+              color: colors.black_color,
+              fontFamily: fonts.bold,
+              fontWeight: '600'
+            }}>
+            Popular Astrologers
+          </Text>
+          <TouchableOpacity
+            onPress={astrologer_list}
+            style={{
+              paddingHorizontal: width * 0.02,
+              paddingVertical: width * 0.01,
+              borderWidth: 1,
+              borderColor: colors.background_theme2,
+              borderRadius: 20,
+            }}>
+            <Text
+              style={{
+                fontSize: width * 0.025,
+                color: colors.background_theme2,
+                fontFamily: fonts.bold,
+                fontWeight: '600'
+              }}>
+              VIEW ALL
+            </Text>
+          </TouchableOpacity>
+        </View>
+        {isLoading && <HomeSimmer isLoading={false} />}
+        {!isLoading && (
+          <FlatList
+            data={astoListData}
+            renderItem={renderItem}
+            horizontal
+            contentContainerStyle={{ paddingHorizontal: width * 0.02, paddingBottom: width * 0.04 }}
+          />
+        )}
+      </>
+    )
+  }
+
+  function astroForCall() {
+    const renderItem = ({ item }) => {
+      const formatFollowers = (followers) => {
+        if (followers >= 1000) {
+          const formattedValue = Math.floor(followers / 1000); // Get the floor value for thousands
+          return `${formattedValue}k`;
+        }
+        return followers.toString();
+      };
+
+      return (
+        <TouchableOpacity
+          activeOpacity={0.8}
+          key={item.id}
+          onPress={() =>
+            props.navigation.navigate('astrologerDetailes', {
+              data: item,
+              type: 'call',
+            })
+          }
+          style={{
+            borderRadius: width * 0.03,
+            marginHorizontal: width * 0.02,
+            backgroundColor: colors.white_color,
+            elevation: 5,
+            borderColor: '#000',
+            justifyContent: 'center',
+            paddingVertical: width * 0.02,
+            paddingHorizontal: width * 0.03,
+            width: width * 0.35,
+            position: 'relative'
+          }}>
+          <View
+            style={{
+              position: 'absolute',
+              left: 1,
+              top: 1,
+              zIndex: 3
+            }}>
+            <Image
+              source={require('../../assets/images/green-button.png')}
+              style={{ width: width * 0.07, height: width * 0.07, }}
+            />
+          </View>
+          {/* Followers Number */}
+          <View
+            style={{
+              padding: width * 0.01,
+              width: width * 0.06,
+              height: width * 0.1,
+              position: 'absolute',
+              alignItems: 'center',
+              zIndex: 10,
+              justifyContent: 'center',
+              backgroundColor: colors.yellow_color2,
+              borderBottomLeftRadius: 10,
+              borderTopRightRadius: width * 0.02,
+              position: 'absolute',
+              right: 0,
+              top: 0,
+            }}>
+            <Ionicons name="people" style={{ fontSize: 10 }} />
+            <Text
+              style={{
+                fontSize: width * 0.02,
+                fontFamily: fonts.semi_bold,
+                color: colors.background_theme2,
+              }}>
+              {formatFollowers(item.followers)}
+            </Text>
+          </View>
+          {/* Followers Number */}
+          <View
+            style={{
+              flex: 0,
+              width: width * 0.2,
+              height: width * 0.2,
+              alignSelf: 'center',
+              borderRadius: 100,
+              overflow: 'hidden',
+              borderWidth: 2.5,
+              borderColor: colors.white_color,
+              elevation: 5
+            }}>
+            <Image
+              source={item.image ? { uri: item.image } : require('../../assets/images/logo.png')}
+              style={{
+                width: '100%',
+                height: '100%',
+                resizeMode: 'cover'
+              }}
+            />
+          </View>
+          <View style={{ marginTop: width * 0.02 }}>
+            <Text
+              numberOfLines={1}
+              style={{
+                fontSize: 14,
+                color: colors.black_color7,
+                fontFamily: fonts.medium,
+                textAlign: 'center',
+                fontWeight: '600',
+                marginTop: 2,
+                textTransform: 'capitalize'
+              }}>
+              {item.owner_name}
+            </Text>
+            <View style={{
+              backgroundColor: colors.yellow_color2,
+              borderRadius: 10,
+              alignSelf: 'center',
+              flexDirection: 'row',
+              alignItems: 'center',
+              paddingHorizontal: width * 0.02,
+              paddingVertical: width * 0.01,
+              marginVertical: width * 0.015
+            }}>
+              <Ionicons name="call" style={{ marginHorizontal: width * 0.01, color: colors.background_theme2 }} />
+              <Text
+                numberOfLines={1}
+                style={{
+                  fontSize: width * 0.03,
+                  color: colors.black_color7,
+                  fontFamily: fonts.medium,
+                  textAlign: 'center',
+                  fontWeight: '600',
+                }}>
+                {`₹ ${parseFloat(item?.call_commission) +
+                  parseFloat(item?.call_price_m)
+                  }/min`}
+              </Text>
+            </View>
+            <View style={{
+              flexDirection: 'row', justifyContent: 'space-between',
+              marginVertical: 3, alignItems: 'center'
+            }}>
+              <View style={{
+                flexDirection: 'row', justifyContent: 'center', width: '40%'
+              }}>
+                <Text
+                  numberOfLines={1}
+                  style={{
+                    fontSize: width * 0.025,
+                    color: colors.black_color,
+                    fontFamily: fonts.medium,
+                    fontWeight: '600'
+                  }}>
+                  {`${parseFloat(item.avg_rating).toFixed(1)}/5`}
+                </Text>
+                <Image
+                  source={require('../../assets/images/star.png')}
+                  style={{ width: width * 0.04, height: width * 0.04 }}
+                />
+              </View>
+              <View
+                style={{
+                  width: 1,
+                  height: width * 0.05,
+                  backgroundColor: colors.black_color4,
+                }}
+              />
+              <View style={{ flexDirection: 'row', justifyContent: 'center', width: '60%' }}>
+                <Text
+                  style={{
+                    fontSize: width * 0.025,
+                    color: colors.green_color1,
+                    fontFamily: fonts.medium,
+                    textAlign: 'center',
+                  }}>
+                  {`Free ${item.free_minut} min`}
+                </Text>
+              </View>
+            </View>
+          </View >
+        </TouchableOpacity >
+      )
+    }
+    return (
+      <>
+        <View
+          style={{
+            width: '100%',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            paddingVertical: 15,
+            paddingTop: 5,
+            paddingBottom: 15,
+            paddingHorizontal: 15
+          }}>
+          <Text
+            style={{
+              fontSize: width * 0.042,
+              color: colors.black_color,
+              fontFamily: fonts.bold,
+              fontWeight: '600'
+            }}>
+            Astrologers for Call
+          </Text>
+          <TouchableOpacity
+            onPress={astrologer_list}
+            style={{
+              paddingHorizontal: width * 0.02,
+              paddingVertical: width * 0.01,
+              borderWidth: 1,
+              borderColor: colors.background_theme2,
+              borderRadius: 20,
+            }}>
+            <Text
+              style={{
+                fontSize: width * 0.025,
+                color: colors.background_theme2,
+                fontFamily: fonts.bold,
+                fontWeight: '600'
+              }}>
+              VIEW ALL
+            </Text>
+          </TouchableOpacity>
+        </View>
+        {isLoading && <HomeSimmer isLoading={false} />}
+        {!isLoading && (
+          <FlatList
+            data={astoListData}
+            renderItem={renderItem}
+            horizontal
+            contentContainerStyle={{ paddingHorizontal: width * 0.02, paddingBottom: width * 0.04 }}
+          />
+        )}
+      </>
+    )
+  }
+
+  function astroForChat() {
+    const renderItem = ({ item }) => {
+      const formatFollowers = (followers) => {
+        if (followers >= 1000) {
+          const formattedValue = Math.floor(followers / 1000); // Get the floor value for thousands
+          return `${formattedValue}k`;
+        }
+        return followers.toString();
+      };
+
+      return (
+        <TouchableOpacity
+          activeOpacity={0.8}
+          key={item.id}
+          onPress={() =>
+            props.navigation.navigate('astrologerDetailes', {
+              data: item,
+              type: 'chat',
+            })
+          }
+          style={{
+            borderRadius: width * 0.03,
+            marginHorizontal: width * 0.02,
+            backgroundColor: colors.white_color,
+            elevation: 5,
+            borderColor: '#000',
+            justifyContent: 'center',
+            paddingVertical: width * 0.02,
+            paddingHorizontal: width * 0.03,
+            width: width * 0.35,
+            position: 'relative'
+          }}>
+          <View
+            style={{
+              position: 'absolute',
+              left: 1,
+              top: 1,
+              zIndex: 3
+            }}>
+            <Image
+              source={require('../../assets/images/green-button.png')}
+              style={{ width: width * 0.07, height: width * 0.07, }}
+            />
+          </View>
+          {/* Followers Number */}
+          <View
+            style={{
+              padding: width * 0.01,
+              width: width * 0.06,
+              height: width * 0.1,
+              position: 'absolute',
+              alignItems: 'center',
+              zIndex: 10,
+              justifyContent: 'center',
+              backgroundColor: colors.yellow_color2,
+              borderBottomLeftRadius: 10,
+              borderTopRightRadius: width * 0.02,
+              position: 'absolute',
+              right: 0,
+              top: 0,
+            }}>
+            <Ionicons name="people" style={{ fontSize: 10 }} />
+            <Text
+              style={{
+                fontSize: width * 0.02,
+                fontFamily: fonts.semi_bold,
+                color: colors.background_theme2,
+              }}>
+              {formatFollowers(item.followers)}
+            </Text>
+          </View>
+          {/* Followers Number */}
+          <View
+            style={{
+              flex: 0,
+              width: width * 0.2,
+              height: width * 0.2,
+              alignSelf: 'center',
+              borderRadius: 100,
+              overflow: 'hidden',
+              borderWidth: 2.5,
+              borderColor: colors.white_color,
+              elevation: 5
+            }}>
+            <Image
+              source={item.image ? { uri: item.image } : require('../../assets/images/logo.png')}
+              style={{
+                width: '100%',
+                height: '100%',
+                resizeMode: 'cover'
+              }}
+            />
+          </View>
+          <View style={{ marginTop: width * 0.02 }}>
+            <Text
+              numberOfLines={1}
+              style={{
+                fontSize: 14,
+                color: colors.black_color7,
+                fontFamily: fonts.medium,
+                textAlign: 'center',
+                fontWeight: '600',
+                marginTop: 2,
+                textTransform: 'capitalize'
+              }}>
+              {item.owner_name}
+            </Text>
+            <View style={{
+              backgroundColor: item.current_status ? colors.yellow_color2 : colors.yellow_color5,
+              borderRadius: 10,
+              alignSelf: 'center',
+              flexDirection: 'row',
+              alignItems: 'center',
+              paddingHorizontal: width * 0.02,
+              paddingVertical: width * 0.01,
+              marginVertical: width * 0.015
+            }}>
+              <Ionicons name="call" style={{ marginHorizontal: width * 0.01, color: colors.background_theme2 }} />
+              <Text
+                numberOfLines={1}
+                style={{
+                  fontSize: width * 0.03,
+                  color: colors.black_color7,
+                  fontFamily: fonts.medium,
+                  textAlign: 'center',
+                  fontWeight: '600',
+                }}>
+                {`₹ ${parseFloat(item?.chat_commission) +
+                  parseFloat(item?.chat_price_m)
+                  }/min`}
+              </Text>
+            </View>
+            <View style={{
+              flexDirection: 'row', justifyContent: 'space-between',
+              marginVertical: 3, alignItems: 'center'
+            }}>
+              <View style={{
+                flexDirection: 'row', justifyContent: 'center', width: '40%'
+              }}>
+                <Text
+                  numberOfLines={1}
+                  style={{
+                    fontSize: width * 0.025,
+                    color: colors.black_color,
+                    fontFamily: fonts.medium,
+                    fontWeight: '600'
+                  }}>
+                  {`${parseFloat(item.avg_rating).toFixed(1)}/5`}
+                </Text>
+                <Image
+                  source={require('../../assets/images/star.png')}
+                  style={{ width: width * 0.04, height: width * 0.04 }}
+                />
+              </View>
+              <View
+                style={{
+                  width: 1,
+                  height: width * 0.05,
+                  backgroundColor: colors.black_color4,
+                }}
+              />
+              <View style={{ flexDirection: 'row', justifyContent: 'center', width: '60%' }}>
+                <Text
+                  style={{
+                    fontSize: width * 0.025,
+                    color: colors.green_color1,
+                    fontFamily: fonts.medium,
+                    textAlign: 'center',
+                  }}>
+                  {`Free ${item.free_minut} min`}
+                </Text>
+              </View>
+            </View>
+          </View >
+          {/* <View
+            style={{
+              flex: 0,
+              position: 'relative',
+              bottom: width * 0.03,
+            }}>
+
+            <View
+              style={{
+                flex: 0,
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: 5,
+                marginTop: 11,
+              }}>
+              <View
+                style={{
+                  flex: 0.43,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}>
+                <Text
+                  style={{
+                    fontSize: 12,
+                    color: colors.black_color,
+                    fontFamily: fonts.medium,
+                    fontWeight: '600'
+                  }}>
+                  {`${parseFloat(item.avg_rating).toFixed(1)}/5`}
+                </Text>
+                <Image
+                  source={require('../../assets/images/star.png')}
+                  style={{ width: 18, height: 18 }}
+                />
+              </View>
+              <View
+                style={{
+                  width: 1,
+                  height: 12,
+                  backgroundColor: colors.black_color7,
+                }}
+              />
+              <View style={{ flex: 0.5 }}>
+                <Text
+                  style={{
+                    fontSize: 12,
+                    color: colors.red_color2,
+                    fontFamily: fonts.medium,
+                    textAlign: 'center',
+                  }}>
+                  {`Free ${item.free_minut} min`}
+                </Text>
+              </View>
+            </View>
+          </View> */}
+        </TouchableOpacity >
+      )
+    }
+    return (
+      <>
+        <View
+          style={{
+            width: '100%',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            paddingVertical: 15,
+            paddingHorizontal: 15
+          }}>
+          <Text
+            style={{
+              fontSize: width * 0.042,
+              color: colors.black_color,
+              fontFamily: fonts.bold,
+              fontWeight: '600'
+            }}>
+            Astrologers for Chat
+          </Text>
+          <TouchableOpacity
+            onPress={astrologer_list}
+            style={{
+              paddingHorizontal: width * 0.02,
+              paddingVertical: width * 0.01,
+              borderWidth: 1,
+              borderColor: colors.background_theme2,
+              borderRadius: 20,
+            }}>
+            <Text
+              style={{
+                fontSize: width * 0.025,
+                color: colors.background_theme2,
+                fontFamily: fonts.bold,
+                fontWeight: '600'
+              }}>
+              VIEW ALL
+            </Text>
+          </TouchableOpacity>
+        </View>
+        {isLoading && <HomeSimmer isLoading={false} />}
+        {!isLoading && (
+          <FlatList
+            data={astoListData}
+            renderItem={renderItem}
+            horizontal
+            contentContainerStyle={{ paddingHorizontal: width * 0.02, paddingBottom: width * 0.04 }}
+          />
+        )}
+      </>
+    )
+  }
+
+  function freeInsights() {
+    return (
+      <ScrollView
+        nestedScrollEnabled
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          width: '100%',
+          padding: 10
+        }}>
+        <View >
+          <TouchableOpacity
+            onPress={() => props.navigation.navigate('kundli')}
+            style={styles.panchangContainer}>
+            <Image
+              source={require('../../assets/images/kundli.png')}
+              style={styles.panchangImage}
+            />
+          </TouchableOpacity>
+          <Text style={styles.punchangText}>Kundli</Text>
+        </View>
+        <View>
+          <TouchableOpacity
+            onPress={() => props.navigation.navigate('matching')}
+            style={styles.panchangContainer}>
+            <Image
+              source={require('../../assets/images/matching.png')}
+              style={styles.panchangImage}
+            />
+          </TouchableOpacity>
+          <Text style={styles.punchangText}>Matching</Text>
+        </View>
+        <View>
+          <TouchableOpacity
+            onPress={() => props.navigation.navigate('selectSign')}
+            style={styles.panchangContainer}>
+            <Image
+              source={require('../../assets/images/Horoscope1.png')}
+              style={styles.panchangImage}
+            />
+          </TouchableOpacity>
+          <Text style={styles.punchangText}>Horoscope</Text>
+        </View>
+        <View>
+          <TouchableOpacity
+            onPress={() => props.navigation.navigate('tarotCard')}
+            style={styles.panchangContainer}>
+            <Image
+              source={require('../../assets/images/tarot-card.png')}
+              style={styles.panchangImage}
+            />
+
+          </TouchableOpacity>
+          <Text style={styles.punchangText}>Tarot card</Text>
+        </View>
+      </ScrollView>
+    )
+  }
+
+  function bannerInfo() {
+    const redner_banner = ({ index, item }) => {
+      return (
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Image
+            source={{ uri: item.sub_cat_img }}
+            style={{ width: width * 0.95, height: width / 2.3, borderRadius: 10 }}
+            resizeMode="stretch"
+          />
+        </View>
+      );
+    };
+    return (
+      <Carousel
+        loop
+        width={width}
+        height={width / 2}
+        autoPlay={true}
+        data={bannerData}
+        scrollAnimationDuration={1500}
+        autoPlayInterval={5000}
+        renderItem={redner_banner}
+      />
+    )
+
+  }
+
+  function searchBarInfo() {
+    return (
+      <TouchableOpacity
+        style={{ backgroundColor: colors.background_theme1 }}
+      // onPress={astrologer_list}
+      >
+        <View
+          style={{
+            flex: 0,
+            backgroundColor: colors.white_color,
+            paddingVertical: 10,
+          }}>
+          <View
+            style={{
+              flex: 0,
+              width: '95%',
+              alignSelf: 'center',
+              flexDirection: 'row',
+              alignItems: 'center',
+              paddingHorizontal: 10,
+              borderRadius: 1000,
+              borderWidth: 1,
+              backgroundColor: colors.background_theme1,
+              borderColor: colors.background_theme2,
+            }}>
+            <Ionicons name="search" color={colors.background_theme2} size={22} />
+            <TextInput
+              editable={false}
+              placeholder="Search Astrologer by name..."
+              placeholderTextColor={colors.black_color6}
+              style={{
+                width: '80%',
+                fontFamily: fonts.medium,
+                color: colors.black_color8,
+                padding: 5,
+                backgroundColor: colors.background_theme1
+              }}
+            />
+          </View>
+        </View>
+      </TouchableOpacity>
+    )
+  };
+}
 const mapStateToProps = state => ({
   customerData: state.customer.customerData,
   wallet: state.customer.wallet,
@@ -761,14 +1040,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 2,
-    // shadowOffset: { width: 2, height: 1 },
-    // shadowColor: colors.black_color4,
-    // shadowOpacity: 0.3,
     marginHorizontal: 10,
   },
   panchangImage: {
-    width: width * 0.11,
-    height: width * 0.11,
+    width: width * 0.1,
+    height: width * 0.1,
     resizeMode: 'contain',
   },
   punchangText: {

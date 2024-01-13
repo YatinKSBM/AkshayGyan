@@ -1,11 +1,11 @@
-import { View, Text, TouchableOpacity, Image } from 'react-native';
+import { View, Text, TouchableOpacity, Image, Dimensions } from 'react-native';
 import React from 'react';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { colors, fonts } from '../config/Constants';
 import { connect } from 'react-redux';
 import { openFacebook, openInstagram, openYoutube } from './Methods';
-
+const { width, height } = Dimensions.get('screen');
 const HomeHeader = props => {
   return (
     <View
@@ -30,60 +30,26 @@ const HomeHeader = props => {
           flex: 0.8,
           fontFamily: fonts.bold,
           color: colors.white_color,
-          fontSize: 16
+          fontSize: width * 0.038
         }}>
         {props.headerTitle}
       </Text>
-      {/* <View style={{flex: 0, flexDirection: 'row'}}>
-        <TouchableOpacity onPress={()=>openYoutube()}>
-          <Image
-            source={require('../assets/images/youtube_logo.jpeg')}
-            style={{width: 20, height: 20, borderRadius: 100, marginRight: 5}}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={()=>openInstagram()}>
-          <Image
-            source={require('../assets/images/instagram_logo.png')}
-            style={{width: 20, height: 20, borderRadius: 100, marginRight: 5}}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={()=>openFacebook()}>
-          <Image
-            source={require('../assets/images/facebook_logo.png')}
-            style={{width: 20, height: 20, borderRadius: 100, marginRight: 5}}
-          />
-        </TouchableOpacity>
-      </View> */}
-      {/* <TouchableOpacity
+      <TouchableOpacity
         onPress={() => props.navigation.navigate('notifications')}
-        style={{flex: 0.2, flexDirection: 'row'}}>
-          {
-            props?.notificationCounts != 0 &&  <View
-            style={{
-              flex: 0,
-              width: 20,
-              height: 20,
-              backgroundColor: colors.red_color1,
-              borderRadius: 9,
-              justifyContent: 'center',
-              position: 'relative',
-              left: 10,
-              bottom: 5,
-              zIndex: 1,
-            }}>
-            <Text
-              style={{
-                fontSize: 12,
-                fontFamily: fonts.medium,
-                textAlign: 'center',
-                color: colors.white_color,
-              }}>
-              {props?.notificationCounts}
-            </Text>
-          </View>
-          }
-        <FontAwesome name="bell" color={colors.black_color8} size={20} />
-      </TouchableOpacity> */}
+        style={{ marginRight: 10, position: 'relative' }}>
+        <Ionicons name="notifications" color={colors.white_color} size={20} />
+        <View style={{
+          position: 'absolute',
+          backgroundColor: colors.background_theme4,
+          borderRadius: 50,
+          width: width * 0.03,
+          height: width * 0.03,
+          right: -width * 0.005, top: -width * 0.01
+        }}>
+          <Text style={{ fontSize: width * 0.02, textAlign: 'center', color: colors.white_color }}>{props.notificationCounts}</Text>
+        </View>
+      </TouchableOpacity >
+
       <TouchableOpacity
         onPress={() => props.navigation.navigate('wallet')}
         style={{
@@ -95,8 +61,7 @@ const HomeHeader = props => {
           justifyContent: 'center',
           alignItems: 'center'
         }}>
-        <Ionicons name="wallet" color={colors.white_color} size={15} />
-
+        <Ionicons name="wallet" color={colors.white_color} size={20} />
         <Text
           style={{
             fontSize: 16,
@@ -108,7 +73,7 @@ const HomeHeader = props => {
           {`${' '}₹ ${parseFloat(props.wallet).toFixed(0)}`}
         </Text>
       </TouchableOpacity>
-    </View>
+    </View >
   );
 };
 
